@@ -4,7 +4,11 @@ import com.example.inventarioapiad.entity.Cliente;
 import com.example.inventarioapiad.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClienteService {
@@ -66,5 +70,33 @@ public class ClienteService {
         Cliente cliente = buscarPorId(id);
         cliente.setActivo(false);
         clienteRepository.save(cliente);
+    }
+
+    // FILTRADO: Buscar clientes con hasta 3 campos
+    public List<Cliente> buscarConFiltros(String nombre, String email, String ciudad) {
+        List<Cliente> clientes = new ArrayList<>((Collection) clienteRepository.findAll());
+
+        // Filtrar por nombre
+        if (nombre != null && !nombre.isEmpty()) {
+            clientes = clientes.stream()
+                    .filter(c -> c.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por email
+        if (email != null && !email.isEmpty()) {
+            clientes = clientes.stream()
+                    .filter(c -> c.getEmail().toLowerCase().contains(email.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por ciudad
+        if (ciudad != null && !ciudad.isEmpty()) {
+            clientes = clientes.stream()
+                    .filter(c -> c.getCiudad().toLowerCase().contains(ciudad.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return clientes;
     }
 }

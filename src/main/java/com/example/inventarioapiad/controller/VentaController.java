@@ -55,13 +55,17 @@ public class VentaController {
 
     // READ ALL - GET /api/ventas
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> buscarTodos(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Integer cantidad,
+            @RequestParam(required = false) String numeroPedido) {
+
         try {
-            List<Venta> ventas = ventaService.buscarTodos();
+            List<Venta> ventas = ventaService.buscarConFiltros(estado, cantidad, numeroPedido);
             return ResponseEntity.ok(ventas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Error al obtener ventas: " + e.getMessage())
+                    new ErrorResponse(500, "Error al filtrar ventas: " + e.getMessage())
             );
         }
     }

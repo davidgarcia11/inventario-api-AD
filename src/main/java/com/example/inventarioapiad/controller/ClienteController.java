@@ -55,13 +55,17 @@ public class ClienteController {
 
     // READ ALL - GET /api/clientes
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> buscarTodos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String ciudad) {
+
         try {
-            List<Cliente> clientes = clienteService.buscarTodos();
+            List<Cliente> clientes = clienteService.buscarConFiltros(nombre, email, ciudad);
             return ResponseEntity.ok(clientes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Error al obtener clientes: " + e.getMessage())
+                    new ErrorResponse(500, "Error al filtrar clientes: " + e.getMessage())
             );
         }
     }

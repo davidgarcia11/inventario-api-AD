@@ -4,7 +4,11 @@ import com.example.inventarioapiad.entity.Almacen;
 import com.example.inventarioapiad.repository.AlmacenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AlmacenService {
@@ -66,5 +70,33 @@ public class AlmacenService {
         Almacen almacen = buscarPorId(id);
         almacen.setActivo(false);
         almacenRepository.save(almacen);
+    }
+
+    // FILTRADO: Buscar almacenes con hasta 3 campos
+    public List<Almacen> buscarConFiltros(String nombre, String ubicacion, Integer capacidadMaxima) {
+        List<Almacen> almacenes = new ArrayList<>((Collection) almacenRepository.findAll());
+
+        // Filtrar por nombre
+        if (nombre != null && !nombre.isEmpty()) {
+            almacenes = almacenes.stream()
+                    .filter(a -> a.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por ubicación
+        if (ubicacion != null && !ubicacion.isEmpty()) {
+            almacenes = almacenes.stream()
+                    .filter(a -> a.getUbicacion().toLowerCase().contains(ubicacion.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por capacidad máxima
+        if (capacidadMaxima != null) {
+            almacenes = almacenes.stream()
+                    .filter(a -> a.getCapacidadMaxima() >= capacidadMaxima)
+                    .collect(Collectors.toList());
+        }
+
+        return almacenes;
     }
 }

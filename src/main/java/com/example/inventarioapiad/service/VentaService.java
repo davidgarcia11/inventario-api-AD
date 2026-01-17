@@ -4,7 +4,11 @@ import com.example.inventarioapiad.entity.Venta;
 import com.example.inventarioapiad.repository.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VentaService {
@@ -84,5 +88,33 @@ public class VentaService {
         Venta venta = buscarPorId(id);
         venta.setEstado("CANCELADA");
         ventaRepository.save(venta);
+    }
+
+    // FILTRADO: Buscar ventas con hasta 3 campos
+    public List<Venta> buscarConFiltros(String estado, Integer cantidad, String numeroPedido) {
+        List<Venta> ventas = new ArrayList<>((Collection) ventaRepository.findAll());
+
+        // Filtrar por estado
+        if (estado != null && !estado.isEmpty()) {
+            ventas = ventas.stream()
+                    .filter(v -> v.getEstado().toLowerCase().contains(estado.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por cantidad
+        if (cantidad != null) {
+            ventas = ventas.stream()
+                    .filter(v -> v.getCantidad() >= cantidad)
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por número de pedido
+        if (numeroPedido != null && !numeroPedido.isEmpty()) {
+            ventas = ventas.stream()
+                    .filter(v -> v.getNumeroPedido().toLowerCase().contains(numeroPedido.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return ventas;
     }
 }
