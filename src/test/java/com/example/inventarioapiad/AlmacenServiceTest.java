@@ -85,7 +85,7 @@ public class AlmacenServiceTest {
                 new Almacen(2L, "Almacén 2", "Ubicación 2", 8000, 3000, "Responsable 2", true, null)
         ));
 
-        java.util.List<Almacen> resultado = almacenService.buscarTodos();
+        java.util.List<Almacen> resultado = almacenService.buscarConFiltros(null, null, null);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());

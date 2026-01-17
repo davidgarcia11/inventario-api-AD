@@ -49,6 +49,10 @@ dependencies {
     // ===== TEST DEPENDENCIES =====
     // Esta librería incluye JUnit 5, Mockito y MockMvc automáticamente
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // WireMock (Asegúrate de que esta línea está así)
+    testImplementation 'org.wiremock:wiremock-standalone:3.3.1'
+
 }
 
 tasks.named('test') {

@@ -83,7 +83,7 @@ public class ClienteServiceTest {
                 new Cliente(2L, "Cliente 2", "email2@test.com", "456", "Dirección 2", "Ciudad 2", true, null)
         ));
 
-        java.util.List<Cliente> resultado = clienteService.buscarTodos();
+        java.util.List<Cliente> resultado = clienteService.buscarConFiltros(null, null, null);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());

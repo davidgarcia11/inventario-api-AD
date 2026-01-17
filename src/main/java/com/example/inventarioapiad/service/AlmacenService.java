@@ -74,23 +74,22 @@ public class AlmacenService {
 
     // FILTRADO: Buscar almacenes con hasta 3 campos
     public List<Almacen> buscarConFiltros(String nombre, String ubicacion, Integer capacidadMaxima) {
-        List<Almacen> almacenes = new ArrayList<>((Collection) almacenRepository.findAll());
+        List<Almacen> almacenes = ((List<Almacen>) almacenRepository.findAll()).stream()
+                .filter(a -> Boolean.TRUE.equals(a.getActivo()))
+                .collect(Collectors.toList());
 
-        // Filtrar por nombre
-        if (nombre != null && !nombre.isEmpty()) {
+        if (nombre != null && !nombre.isBlank()) {
             almacenes = almacenes.stream()
                     .filter(a -> a.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por ubicación
-        if (ubicacion != null && !ubicacion.isEmpty()) {
+        if (ubicacion != null && !ubicacion.isBlank()) {
             almacenes = almacenes.stream()
                     .filter(a -> a.getUbicacion().toLowerCase().contains(ubicacion.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por capacidad máxima
         if (capacidadMaxima != null) {
             almacenes = almacenes.stream()
                     .filter(a -> a.getCapacidadMaxima() >= capacidadMaxima)

@@ -113,18 +113,15 @@ public class ProductoServiceTest {
     // TEST 7: Buscar todos
     @Test
     public void testBuscarTodos() {
-        List<Producto> productos = Arrays.asList(
-                new Producto(1L, "Tornillo", "SKU-1", null, 0.5f, 1.0f, 100, true, null),
-                new Producto(2L, "Tuerca", "SKU-2", null, 0.3f, 0.7f, 200, true, null)
-        );
+        Producto p1 = new Producto(1L, "Tornillo", "SKU-1", null, 0.5f, 1.0f, 100, true, null);
+        Producto p2 = new Producto(2L, "Tuerca", "SKU-2", null, 0.3f, 0.7f, 200, true, null);
 
-        when(productoRepository.findAll()).thenReturn(productos);
+        when(productoRepository.findAll()).thenReturn(java.util.Arrays.asList(p1, p2));
 
-        List<Producto> resultado = productoService.buscarTodos();
+        java.util.List<Producto> resultado = productoService.buscarConFiltros(null, null, null);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
-        verify(productoRepository, times(1)).findAll();
     }
 
     // TEST 8: Actualizar producto

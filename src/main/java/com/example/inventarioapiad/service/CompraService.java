@@ -91,22 +91,19 @@ public class CompraService {
     public List<Compra> buscarConFiltros(String estado, Integer cantidad, String numeroFactura) {
         List<Compra> compras = new ArrayList<>((Collection) compraRepository.findAll());
 
-        // Filtrar por estado
-        if (estado != null && !estado.isEmpty()) {
+        if (estado != null && !estado.isBlank()) {
             compras = compras.stream()
                     .filter(c -> c.getEstado().toLowerCase().contains(estado.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por cantidad
         if (cantidad != null) {
             compras = compras.stream()
                     .filter(c -> c.getCantidad() >= cantidad)
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por número de factura
-        if (numeroFactura != null && !numeroFactura.isEmpty()) {
+        if (numeroFactura != null && !numeroFactura.isBlank()) {
             compras = compras.stream()
                     .filter(c -> c.getNumeroFactura().toLowerCase().contains(numeroFactura.toLowerCase()))
                     .collect(Collectors.toList());
