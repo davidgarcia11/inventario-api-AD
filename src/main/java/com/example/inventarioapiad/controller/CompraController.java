@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 
 @RestController
@@ -108,6 +114,46 @@ public class CompraController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new ErrorResponse(500, "Error al eliminar la compra: " + e.getMessage())
+            );
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Actualizar parcialmente una compra")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Compra actualizada parcialmente"),
+            @ApiResponse(responseCode = "404", description = "Compra no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> actualizarParcial(
+            @Parameter(description = "ID de la compra", example = "1")
+            @PathVariable Long id,
+            @RequestBody Compra compraActualizada) {
+        try {
+            Compra existente = compraService.buscarPorId(id);
+
+            if (compraActualizada.getCantidad() != null) {
+                existente.setCantidad(compraActualizada.getCantidad());
+            }
+            if (compraActualizada.getPrecioUnitario() != null) {
+                existente.setPrecioUnitario(compraActualizada.getPrecioUnitario());
+            }
+            if (compraActualizada.getNumeroFactura() != null) {
+                existente.setNumeroFactura(compraActualizada.getNumeroFactura());
+            }
+            if (compraActualizada.getEstado() != null) {
+                existente.setEstado(compraActualizada.getEstado());
+            }
+
+            Compra actualizada = compraService.actualizar(id, existente);
+            return ResponseEntity.ok(actualizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ErrorResponse(404, "Compra no encontrada")
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Error al actualizar: " + e.getMessage())
             );
         }
     }
