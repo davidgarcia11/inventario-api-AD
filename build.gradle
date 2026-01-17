@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    // Usamos Spring Boot 3.2.2 (versión estable y existente)
+    id 'org.springframework.boot' version '3.2.2'
+    // IMPORTANTE: Mantenemos la 1.1.7 que es compatible con Gradle 8.5+ y Java 21
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.Example'
+version = '0.0.1-SNAPSHOT'
+description = 'inventario-api-AD'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Spring Data JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // OpenAPI
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // MariaDB Driver
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+    // ===== TEST DEPENDENCIES =====
+    // Esta librería incluye JUnit 5, Mockito y MockMvc automáticamente
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
