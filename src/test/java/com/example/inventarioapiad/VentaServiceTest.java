@@ -83,11 +83,11 @@ public class VentaServiceTest {
     @Test
     public void testBuscarTodos() {
         when(ventaRepository.findAll()).thenReturn(java.util.Arrays.asList(
-                new Venta(1L, null, null, null, 100, 1.0f, LocalDateTime.now(), "PED-1", "ENTREGADA", LocalDateTime.now()),
-                new Venta(2L, null, null, null, 50, 1.5f, LocalDateTime.now(), "PED-2", "ENTREGADA", LocalDateTime.now())
+                new Venta(1L, null, null, null, 100, 1.0f, java.time.LocalDateTime.now(), "PED-1", "ENTREGADA", java.time.LocalDateTime.now()),
+                new Venta(2L, null, null, null, 50, 1.5f, java.time.LocalDateTime.now(), "PED-2", "ENTREGADA", java.time.LocalDateTime.now())
         ));
 
-        java.util.List<Venta> resultado = ventaService.buscarTodos();
+        java.util.List<Venta> resultado = ventaService.buscarConFiltros(null, null, null);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());

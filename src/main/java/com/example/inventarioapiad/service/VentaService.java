@@ -94,22 +94,19 @@ public class VentaService {
     public List<Venta> buscarConFiltros(String estado, Integer cantidad, String numeroPedido) {
         List<Venta> ventas = new ArrayList<>((Collection) ventaRepository.findAll());
 
-        // Filtrar por estado
-        if (estado != null && !estado.isEmpty()) {
+        if (estado != null && !estado.isBlank()) {
             ventas = ventas.stream()
                     .filter(v -> v.getEstado().toLowerCase().contains(estado.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por cantidad
         if (cantidad != null) {
             ventas = ventas.stream()
                     .filter(v -> v.getCantidad() >= cantidad)
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por número de pedido
-        if (numeroPedido != null && !numeroPedido.isEmpty()) {
+        if (numeroPedido != null && !numeroPedido.isBlank()) {
             ventas = ventas.stream()
                     .filter(v -> v.getNumeroPedido().toLowerCase().contains(numeroPedido.toLowerCase()))
                     .collect(Collectors.toList());

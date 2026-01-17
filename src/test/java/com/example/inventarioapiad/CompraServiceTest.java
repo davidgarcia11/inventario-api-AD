@@ -82,11 +82,11 @@ public class CompraServiceTest {
     @Test
     public void testBuscarTodos() {
         when(compraRepository.findAll()).thenReturn(java.util.Arrays.asList(
-                new Compra(1L, null, null, null, 100, 1.0f, LocalDateTime.now(), "FAC-1", "RECIBIDA", LocalDateTime.now()),
-                new Compra(2L, null, null, null, 200, 1.5f, LocalDateTime.now(), "FAC-2", "RECIBIDA", LocalDateTime.now())
+                new Compra(1L, null, null, null, 100, 1.0f, java.time.LocalDateTime.now(), "FAC-1", "RECIBIDA", java.time.LocalDateTime.now()),
+                new Compra(2L, null, null, null, 200, 1.5f, java.time.LocalDateTime.now(), "FAC-2", "RECIBIDA", java.time.LocalDateTime.now())
         ));
 
-        java.util.List<Compra> resultado = compraService.buscarTodos();
+        java.util.List<Compra> resultado = compraService.buscarConFiltros(null, null, null);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());

@@ -86,23 +86,22 @@ public class ProductoService {
 
     // FILTRADO: Buscar productos con hasta 3 campos
     public List<Producto> buscarConFiltros(String nombre, String sku, Float precioVenta) {
-        List<Producto> productos = new ArrayList<>((Collection) productoRepository.findAll());
+        List<Producto> productos = ((List<Producto>) productoRepository.findAll()).stream()
+                .filter(p -> Boolean.TRUE.equals(p.getActivo()))
+                .collect(Collectors.toList());
 
-        // Filtrar por nombre
-        if (nombre != null && !nombre.isEmpty()) {
+        if (nombre != null && !nombre.isBlank()) {
             productos = productos.stream()
                     .filter(p -> p.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por SKU
-        if (sku != null && !sku.isEmpty()) {
+        if (sku != null && !sku.isBlank()) {
             productos = productos.stream()
                     .filter(p -> p.getSku().toLowerCase().contains(sku.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por precio de venta
         if (precioVenta != null) {
             productos = productos.stream()
                     .filter(p -> p.getPrecioVenta() >= precioVenta)

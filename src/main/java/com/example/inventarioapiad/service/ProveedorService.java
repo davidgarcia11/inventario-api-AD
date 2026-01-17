@@ -74,23 +74,22 @@ public class ProveedorService {
 
     // FILTRADO: Buscar proveedores con hasta 3 campos
     public List<Proveedor> buscarConFiltros(String nombre, String email, Integer diasEntrega) {
-        List<Proveedor> proveedores = new ArrayList<>((Collection) proveedorRepository.findAll());
+        List<Proveedor> proveedores = ((List<Proveedor>) proveedorRepository.findAll()).stream()
+                .filter(p -> Boolean.TRUE.equals(p.getActivo()))
+                .collect(Collectors.toList());
 
-        // Filtrar por nombre
-        if (nombre != null && !nombre.isEmpty()) {
+        if (nombre != null && !nombre.isBlank()) {
             proveedores = proveedores.stream()
                     .filter(p -> p.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por email
-        if (email != null && !email.isEmpty()) {
+        if (email != null && !email.isBlank()) {
             proveedores = proveedores.stream()
                     .filter(p -> p.getEmail().toLowerCase().contains(email.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por días de entrega
         if (diasEntrega != null) {
             proveedores = proveedores.stream()
                     .filter(p -> p.getDiasEntrega() <= diasEntrega)

@@ -74,24 +74,23 @@ public class ClienteService {
 
     // FILTRADO: Buscar clientes con hasta 3 campos
     public List<Cliente> buscarConFiltros(String nombre, String email, String ciudad) {
-        List<Cliente> clientes = new ArrayList<>((Collection) clienteRepository.findAll());
+        List<Cliente> clientes = ((List<Cliente>) clienteRepository.findAll()).stream()
+                .filter(c -> Boolean.TRUE.equals(c.getActivo()))
+                .collect(Collectors.toList());
 
-        // Filtrar por nombre
-        if (nombre != null && !nombre.isEmpty()) {
+        if (nombre != null && !nombre.isBlank()) {
             clientes = clientes.stream()
                     .filter(c -> c.getNombre().toLowerCase().contains(nombre.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por email
-        if (email != null && !email.isEmpty()) {
+        if (email != null && !email.isBlank()) {
             clientes = clientes.stream()
                     .filter(c -> c.getEmail().toLowerCase().contains(email.toLowerCase()))
                     .collect(Collectors.toList());
         }
 
-        // Filtrar por ciudad
-        if (ciudad != null && !ciudad.isEmpty()) {
+        if (ciudad != null && !ciudad.isBlank()) {
             clientes = clientes.stream()
                     .filter(c -> c.getCiudad().toLowerCase().contains(ciudad.toLowerCase()))
                     .collect(Collectors.toList());

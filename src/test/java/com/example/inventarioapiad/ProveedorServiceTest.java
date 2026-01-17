@@ -83,7 +83,7 @@ public class ProveedorServiceTest {
                 new Proveedor(2L, "Proveedor 2", "email2@test.com", "456", "España", 2, true, null)
         ));
 
-        java.util.List<Proveedor> resultado = proveedorService.buscarTodos();
+        java.util.List<Proveedor> resultado = proveedorService.buscarConFiltros(null, null, null);
 
         assertNotNull(resultado);
         assertEquals(2, resultado.size());
