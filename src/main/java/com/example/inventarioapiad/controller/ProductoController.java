@@ -55,13 +55,17 @@ public class ProductoController {
 
     // READ ALL - GET /api/productos
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> buscarTodos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String sku,
+            @RequestParam(required = false) Float precioVenta) {
+
         try {
-            List<Producto> productos = productoService.buscarTodos();
+            List<Producto> productos = productoService.buscarConFiltros(nombre, sku, precioVenta);
             return ResponseEntity.ok(productos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Error al obtener productos: " + e.getMessage())
+                    new ErrorResponse(500, "Error al filtrar productos: " + e.getMessage())
             );
         }
     }
@@ -121,4 +125,6 @@ public class ProductoController {
         public int getCodigo() { return codigo; }
         public String getMensaje() { return mensaje; }
     }
+
+
 }

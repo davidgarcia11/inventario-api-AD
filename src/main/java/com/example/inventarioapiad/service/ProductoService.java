@@ -4,8 +4,12 @@ import com.example.inventarioapiad.entity.Producto;
 import com.example.inventarioapiad.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductoService {
@@ -78,5 +82,33 @@ public class ProductoService {
         Producto producto = buscarPorId(id);
         producto.setActivo(false);  // Soft delete: marcar como inactivo
         productoRepository.save(producto);
+    }
+
+    // FILTRADO: Buscar productos con hasta 3 campos
+    public List<Producto> buscarConFiltros(String nombre, String sku, Float precioVenta) {
+        List<Producto> productos = new ArrayList<>((Collection) productoRepository.findAll());
+
+        // Filtrar por nombre
+        if (nombre != null && !nombre.isEmpty()) {
+            productos = productos.stream()
+                    .filter(p -> p.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por SKU
+        if (sku != null && !sku.isEmpty()) {
+            productos = productos.stream()
+                    .filter(p -> p.getSku().toLowerCase().contains(sku.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por precio de venta
+        if (precioVenta != null) {
+            productos = productos.stream()
+                    .filter(p -> p.getPrecioVenta() >= precioVenta)
+                    .collect(Collectors.toList());
+        }
+
+        return productos;
     }
 }

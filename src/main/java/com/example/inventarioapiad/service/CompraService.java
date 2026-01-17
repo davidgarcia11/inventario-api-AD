@@ -4,7 +4,11 @@ import com.example.inventarioapiad.entity.Compra;
 import com.example.inventarioapiad.repository.CompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CompraService {
@@ -81,5 +85,33 @@ public class CompraService {
         Compra compra = buscarPorId(id);
         compra.setEstado("CANCELADA");
         compraRepository.save(compra);
+    }
+
+    // FILTRADO: Buscar compras con hasta 3 campos
+    public List<Compra> buscarConFiltros(String estado, Integer cantidad, String numeroFactura) {
+        List<Compra> compras = new ArrayList<>((Collection) compraRepository.findAll());
+
+        // Filtrar por estado
+        if (estado != null && !estado.isEmpty()) {
+            compras = compras.stream()
+                    .filter(c -> c.getEstado().toLowerCase().contains(estado.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por cantidad
+        if (cantidad != null) {
+            compras = compras.stream()
+                    .filter(c -> c.getCantidad() >= cantidad)
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por número de factura
+        if (numeroFactura != null && !numeroFactura.isEmpty()) {
+            compras = compras.stream()
+                    .filter(c -> c.getNumeroFactura().toLowerCase().contains(numeroFactura.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        return compras;
     }
 }

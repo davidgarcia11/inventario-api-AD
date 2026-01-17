@@ -55,13 +55,17 @@ public class ProveedorController {
 
     // READ ALL - GET /api/proveedores
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> buscarTodos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Integer diasEntrega) {
+
         try {
-            List<Proveedor> proveedores = proveedorService.buscarTodos();
+            List<Proveedor> proveedores = proveedorService.buscarConFiltros(nombre, email, diasEntrega);
             return ResponseEntity.ok(proveedores);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Error al obtener proveedores: " + e.getMessage())
+                    new ErrorResponse(500, "Error al filtrar proveedores: " + e.getMessage())
             );
         }
     }

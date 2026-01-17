@@ -55,13 +55,17 @@ public class AlmacenController {
 
     // READ ALL - GET /api/almacenes
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> buscarTodos(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String ubicacion,
+            @RequestParam(required = false) Integer capacidadMaxima) {
+
         try {
-            List<Almacen> almacenes = almacenService.buscarTodos();
+            List<Almacen> almacenes = almacenService.buscarConFiltros(nombre, ubicacion, capacidadMaxima);
             return ResponseEntity.ok(almacenes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Error al obtener almacenes: " + e.getMessage())
+                    new ErrorResponse(500, "Error al filtrar almacenes: " + e.getMessage())
             );
         }
     }

@@ -4,7 +4,11 @@ import com.example.inventarioapiad.entity.Proveedor;
 import com.example.inventarioapiad.repository.ProveedorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProveedorService {
@@ -66,5 +70,33 @@ public class ProveedorService {
         Proveedor proveedor = buscarPorId(id);
         proveedor.setActivo(false);
         proveedorRepository.save(proveedor);
+    }
+
+    // FILTRADO: Buscar proveedores con hasta 3 campos
+    public List<Proveedor> buscarConFiltros(String nombre, String email, Integer diasEntrega) {
+        List<Proveedor> proveedores = new ArrayList<>((Collection) proveedorRepository.findAll());
+
+        // Filtrar por nombre
+        if (nombre != null && !nombre.isEmpty()) {
+            proveedores = proveedores.stream()
+                    .filter(p -> p.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por email
+        if (email != null && !email.isEmpty()) {
+            proveedores = proveedores.stream()
+                    .filter(p -> p.getEmail().toLowerCase().contains(email.toLowerCase()))
+                    .collect(Collectors.toList());
+        }
+
+        // Filtrar por días de entrega
+        if (diasEntrega != null) {
+            proveedores = proveedores.stream()
+                    .filter(p -> p.getDiasEntrega() <= diasEntrega)
+                    .collect(Collectors.toList());
+        }
+
+        return proveedores;
     }
 }

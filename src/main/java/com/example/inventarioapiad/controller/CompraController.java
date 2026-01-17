@@ -55,13 +55,17 @@ public class CompraController {
 
     // READ ALL - GET /api/compras
     @GetMapping
-    public ResponseEntity<?> buscarTodos() {
+    public ResponseEntity<?> buscarTodos(
+            @RequestParam(required = false) String estado,
+            @RequestParam(required = false) Integer cantidad,
+            @RequestParam(required = false) String numeroFactura) {
+
         try {
-            List<Compra> compras = compraService.buscarTodos();
+            List<Compra> compras = compraService.buscarConFiltros(estado, cantidad, numeroFactura);
             return ResponseEntity.ok(compras);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-                    new ErrorResponse(500, "Error al obtener compras: " + e.getMessage())
+                    new ErrorResponse(500, "Error al filtrar compras: " + e.getMessage())
             );
         }
     }
