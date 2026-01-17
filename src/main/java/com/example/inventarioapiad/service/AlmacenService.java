@@ -2,6 +2,8 @@ package com.example.inventarioapiad.service;
 
 import com.example.inventarioapiad.entity.Almacen;
 import com.example.inventarioapiad.repository.AlmacenRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,35 +15,55 @@ import java.util.stream.Collectors;
 @Service
 public class AlmacenService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AlmacenService.class);
+
     @Autowired
     private AlmacenRepository almacenRepository;
 
     public Almacen crear(Almacen almacen) {
+        logger.info("Creando almacén: " + almacen.getNombre());
+
         if (almacen.getNombre() == null || almacen.getNombre().isBlank()) {
+            logger.error("Error: Nombre del almacén vacío");
             throw new IllegalArgumentException("El nombre del almacén es obligatorio");
         }
         if (almacen.getUbicacion() == null || almacen.getUbicacion().isBlank()) {
+            logger.error("Error: Ubicación vacía");
             throw new IllegalArgumentException("La ubicación es obligatoria");
         }
         if (almacen.getCapacidadMaxima() != null && almacen.getCapacidadMaxima() <= 0) {
+            logger.error("Error: Capacidad máxima inválida");
             throw new IllegalArgumentException("La capacidad máxima debe ser mayor a 0");
         }
-        return almacenRepository.save(almacen);
+
+        Almacen creado = almacenRepository.save(almacen);
+        logger.info("Almacén creado exitosamente con ID: " + creado.getId());
+        return creado;
     }
 
     public Almacen buscarPorId(Long id) {
+        logger.info("Buscando almacén con ID: " + id);
+
         if (id == null || id <= 0) {
+            logger.error("Error: ID inválido");
             throw new IllegalArgumentException("El ID debe ser válido");
         }
+
         return almacenRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Almacén no encontrado con ID: " + id));
+                .orElseThrow(() -> {
+                    logger.error("Almacén no encontrado con ID: " + id);
+                    return new RuntimeException("Almacén no encontrado con ID: " + id);
+                });
     }
 
     public List<Almacen> buscarTodos() {
+        logger.info("Listando todos los almacenes");
         return (List<Almacen>) almacenRepository.findAll();
     }
 
     public Almacen actualizar(Long id, Almacen almacenActualizado) {
+        logger.info("Actualizando almacén con ID: " + id);
+
         Almacen almacen = buscarPorId(id);
 
         if (almacenActualizado.getNombre() != null && !almacenActualizado.getNombre().isBlank()) {
@@ -63,17 +85,25 @@ public class AlmacenService {
             almacen.setActivo(almacenActualizado.getActivo());
         }
 
-        return almacenRepository.save(almacen);
+        Almacen actualizado = almacenRepository.save(almacen);
+        logger.info("Almacén actualizado exitosamente con ID: " + id);
+        return actualizado;
     }
 
     public void eliminar(Long id) {
+        logger.info("Eliminando almacén con ID: " + id);
+
         Almacen almacen = buscarPorId(id);
         almacen.setActivo(false);
         almacenRepository.save(almacen);
+
+        logger.info("Almacén eliminado (soft delete) con ID: " + id);
     }
 
     // FILTRADO: Buscar almacenes con hasta 3 campos
     public List<Almacen> buscarConFiltros(String nombre, String ubicacion, Integer capacidadMaxima) {
+        logger.info("Filtrando almacenes - nombre: " + nombre + ", ubicacion: " + ubicacion + ", capacidadMaxima: " + capacidadMaxima);
+
         List<Almacen> almacenes = ((List<Almacen>) almacenRepository.findAll()).stream()
                 .filter(a -> Boolean.TRUE.equals(a.getActivo()))
                 .collect(Collectors.toList());
@@ -96,6 +126,7 @@ public class AlmacenService {
                     .collect(Collectors.toList());
         }
 
+        logger.info("Filtrado completado. Resultados: " + almacenes.size() + " almacenes");
         return almacenes;
     }
 }
