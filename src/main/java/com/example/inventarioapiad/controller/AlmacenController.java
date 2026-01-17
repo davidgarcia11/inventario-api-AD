@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 
 @RestController
@@ -108,6 +114,49 @@ public class AlmacenController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new ErrorResponse(500, "Error al eliminar el almacén: " + e.getMessage())
+            );
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Actualizar parcialmente un almacén")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Almacén actualizado parcialmente"),
+            @ApiResponse(responseCode = "404", description = "Almacén no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> actualizarParcial(
+            @Parameter(description = "ID del almacén", example = "1")
+            @PathVariable Long id,
+            @RequestBody Almacen almacenActualizado) {
+        try {
+            Almacen existente = almacenService.buscarPorId(id);
+
+            if (almacenActualizado.getNombre() != null) {
+                existente.setNombre(almacenActualizado.getNombre());
+            }
+            if (almacenActualizado.getUbicacion() != null) {
+                existente.setUbicacion(almacenActualizado.getUbicacion());
+            }
+            if (almacenActualizado.getCapacidadMaxima() != null) {
+                existente.setCapacidadMaxima(almacenActualizado.getCapacidadMaxima());
+            }
+            if (almacenActualizado.getStockActual() != null) {
+                existente.setStockActual(almacenActualizado.getStockActual());
+            }
+            if (almacenActualizado.getResponsable() != null) {
+                existente.setResponsable(almacenActualizado.getResponsable());
+            }
+
+            Almacen actualizado = almacenService.actualizar(id, existente);
+            return ResponseEntity.ok(actualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ErrorResponse(404, "Almacén no encontrado")
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Error al actualizar: " + e.getMessage())
             );
         }
     }

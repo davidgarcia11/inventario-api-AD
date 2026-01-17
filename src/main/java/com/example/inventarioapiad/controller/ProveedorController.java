@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 
 @RestController
@@ -108,6 +114,49 @@ public class ProveedorController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new ErrorResponse(500, "Error al eliminar el proveedor: " + e.getMessage())
+            );
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Actualizar parcialmente un proveedor")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Proveedor actualizado parcialmente"),
+            @ApiResponse(responseCode = "404", description = "Proveedor no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> actualizarParcial(
+            @Parameter(description = "ID del proveedor", example = "1")
+            @PathVariable Long id,
+            @RequestBody Proveedor proveedorActualizado) {
+        try {
+            Proveedor existente = proveedorService.buscarPorId(id);
+
+            if (proveedorActualizado.getNombre() != null) {
+                existente.setNombre(proveedorActualizado.getNombre());
+            }
+            if (proveedorActualizado.getEmail() != null) {
+                existente.setEmail(proveedorActualizado.getEmail());
+            }
+            if (proveedorActualizado.getTelefono() != null) {
+                existente.setTelefono(proveedorActualizado.getTelefono());
+            }
+            if (proveedorActualizado.getPais() != null) {
+                existente.setPais(proveedorActualizado.getPais());
+            }
+            if (proveedorActualizado.getDiasEntrega() != null) {
+                existente.setDiasEntrega(proveedorActualizado.getDiasEntrega());
+            }
+
+            Proveedor actualizado = proveedorService.actualizar(id, existente);
+            return ResponseEntity.ok(actualizado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ErrorResponse(404, "Proveedor no encontrado")
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Error al actualizar: " + e.getMessage())
             );
         }
     }

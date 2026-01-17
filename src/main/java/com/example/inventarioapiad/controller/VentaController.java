@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 
 @RestController
@@ -108,6 +114,46 @@ public class VentaController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     new ErrorResponse(500, "Error al eliminar la venta: " + e.getMessage())
+            );
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(summary = "Actualizar parcialmente una venta")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Venta actualizada parcialmente"),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<?> actualizarParcial(
+            @Parameter(description = "ID de la venta", example = "1")
+            @PathVariable Long id,
+            @RequestBody Venta ventaActualizada) {
+        try {
+            Venta existente = ventaService.buscarPorId(id);
+
+            if (ventaActualizada.getCantidad() != null) {
+                existente.setCantidad(ventaActualizada.getCantidad());
+            }
+            if (ventaActualizada.getPrecioUnitario() != null) {
+                existente.setPrecioUnitario(ventaActualizada.getPrecioUnitario());
+            }
+            if (ventaActualizada.getNumeroPedido() != null) {
+                existente.setNumeroPedido(ventaActualizada.getNumeroPedido());
+            }
+            if (ventaActualizada.getEstado() != null) {
+                existente.setEstado(ventaActualizada.getEstado());
+            }
+
+            Venta actualizada = ventaService.actualizar(id, existente);
+            return ResponseEntity.ok(actualizada);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ErrorResponse(404, "Venta no encontrada")
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    new ErrorResponse(500, "Error al actualizar: " + e.getMessage())
             );
         }
     }
