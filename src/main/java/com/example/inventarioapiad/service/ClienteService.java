@@ -2,10 +2,9 @@ package com.example.inventarioapiad.service;
 
 import com.example.inventarioapiad.entity.Cliente;
 import com.example.inventarioapiad.repository.ClienteRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,56 +12,55 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ClienteService {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClienteService.class);
 
     @Autowired
     private ClienteRepository clienteRepository;
 
     public Cliente crear(Cliente cliente) {
-        logger.info("Creando cliente: " + cliente.getNombre());
+        log.info("Creando cliente: " + cliente.getNombre());
 
         if (cliente.getNombre() == null || cliente.getNombre().isBlank()) {
-            logger.error("Error: Nombre del cliente vacío");
+            log.error("Error: Nombre del cliente vacío");
             throw new IllegalArgumentException("El nombre del cliente es obligatorio");
         }
         if (cliente.getEmail() == null || cliente.getEmail().isBlank()) {
-            logger.error("Error: Email del cliente vacío");
+            log.error("Error: Email del cliente vacío");
             throw new IllegalArgumentException("El email es obligatorio");
         }
         if (!cliente.getEmail().contains("@")) {
-            logger.error("Error: Email inválido");
+            log.error("Error: Email inválido");
             throw new IllegalArgumentException("El email debe ser válido");
         }
 
         Cliente creado = clienteRepository.save(cliente);
-        logger.info("Cliente creado exitosamente con ID: " + creado.getId());
+        log.info("Cliente creado exitosamente con ID: " + creado.getId());
         return creado;
     }
 
     public Cliente buscarPorId(Long id) {
-        logger.info("Buscando cliente con ID: " + id);
+        log.info("Buscando cliente con ID: " + id);
 
         if (id == null || id <= 0) {
-            logger.error("Error: ID inválido");
+            log.error("Error: ID inválido");
             throw new IllegalArgumentException("El ID debe ser válido");
         }
 
         return clienteRepository.findById(id)
                 .orElseThrow(() -> {
-                    logger.error("Cliente no encontrado con ID: " + id);
+                    log.error("Cliente no encontrado con ID: " + id);
                     return new RuntimeException("Cliente no encontrado con ID: " + id);
                 });
     }
 
     public List<Cliente> buscarTodos() {
-        logger.info("Listando todos los clientes");
+        log.info("Listando todos los clientes");
         return (List<Cliente>) clienteRepository.findAll();
     }
 
     public Cliente actualizar(Long id, Cliente clienteActualizado) {
-        logger.info("Actualizando cliente con ID: " + id);
+        log.info("Actualizando cliente con ID: " + id);
 
         Cliente cliente = buscarPorId(id);
 
@@ -86,23 +84,23 @@ public class ClienteService {
         }
 
         Cliente actualizado = clienteRepository.save(cliente);
-        logger.info("Cliente actualizado exitosamente con ID: " + id);
+        log.info("Cliente actualizado exitosamente con ID: " + id);
         return actualizado;
     }
 
     public void eliminar(Long id) {
-        logger.info("Eliminando cliente con ID: " + id);
+        log.info("Eliminando cliente con ID: " + id);
 
         Cliente cliente = buscarPorId(id);
         cliente.setActivo(false);
         clienteRepository.save(cliente);
 
-        logger.info("Cliente eliminado (soft delete) con ID: " + id);
+        log.info("Cliente eliminado (soft delete) con ID: " + id);
     }
 
     // FILTRADO: Buscar clientes con hasta 3 campos
     public List<Cliente> buscarConFiltros(String nombre, String email, String ciudad) {
-        logger.info("Filtrando clientes - nombre: " + nombre + ", email: " + email + ", ciudad: " + ciudad);
+        log.info("Filtrando clientes - nombre: " + nombre + ", email: " + email + ", ciudad: " + ciudad);
 
         List<Cliente> clientes = ((List<Cliente>) clienteRepository.findAll()).stream()
                 .filter(c -> Boolean.TRUE.equals(c.getActivo()))
@@ -126,7 +124,7 @@ public class ClienteService {
                     .collect(Collectors.toList());
         }
 
-        logger.info("Filtrado completado. Resultados: " + clientes.size() + " clientes");
+        log.info("Filtrado completado. Resultados: " + clientes.size() + " clientes");
         return clientes;
     }
 }
