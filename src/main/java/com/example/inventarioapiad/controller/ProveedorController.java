@@ -23,6 +23,12 @@ public class ProveedorController {
 
     // CREATE - POST /api/proveedores
     @PostMapping
+    @Operation(summary = "Crear Proveedor", description = "Crea un nuevo proveedor. Campos obligatorios: nombre, email.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Proveedor creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, email incorrecto, etc.)"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> crear(@RequestBody Proveedor proveedor) {
         try {
             Proveedor creado = proveedorService.crear(proveedor);
@@ -40,6 +46,12 @@ public class ProveedorController {
 
     // READ - GET /api/proveedores/{id}
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener Proveedor por ID", description = "Obtiene un proveedor específico por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Proveedor encontrado"),
+            @ApiResponse(responseCode = "404", description = "Proveedor no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             Proveedor proveedor = proveedorService.buscarPorId(id);
@@ -61,6 +73,11 @@ public class ProveedorController {
 
     // READ ALL - GET /api/proveedores
     @GetMapping
+    @Operation(summary = "Listar Proveedores", description = "Obtiene todos los proveedores activos. Permite filtrar por nombre, email y días de entrega.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de proveedores recuperada exitosamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarTodos(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String email,
@@ -78,6 +95,13 @@ public class ProveedorController {
 
     // UPDATE - PUT /api/proveedores/{id}
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del proveedor (reemplazo completo)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Proveedor actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Proveedor no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Proveedor proveedorActualizado) {
         try {
             Proveedor actualizado = proveedorService.actualizar(id, proveedorActualizado);
@@ -99,6 +123,12 @@ public class ProveedorController {
 
     // DELETE - DELETE /api/proveedores/{id}
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar Proveedor", description = "Soft delete: marca el proveedor como inactivo (activo=false)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Proveedor eliminado (inactivado) correctamente"),
+            @ApiResponse(responseCode = "404", description = "Proveedor no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             proveedorService.eliminar(id);
@@ -118,8 +148,9 @@ public class ProveedorController {
         }
     }
 
+    // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente un proveedor")
+    @Operation(summary = "Actualizar parcialmente un proveedor", description = "Actualiza solo los campos proporcionados, manteniendo el resto igual.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Proveedor actualizado parcialmente"),
             @ApiResponse(responseCode = "404", description = "Proveedor no encontrado"),

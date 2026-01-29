@@ -23,6 +23,12 @@ public class ClienteController {
 
     // CREATE - POST /api/clientes
     @PostMapping
+    @Operation(summary = "Crear Cliente", description = "Crea un nuevo cliente. Campos obligatorios: nombre, email.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, email inválido, etc.)"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> crear(@RequestBody Cliente cliente) {
         try {
             Cliente creado = clienteService.crear(cliente);
@@ -40,6 +46,12 @@ public class ClienteController {
 
     // READ - GET /api/clientes/{id}
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener Cliente por ID", description = "Obtiene un cliente específico por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             Cliente cliente = clienteService.buscarPorId(id);
@@ -61,6 +73,11 @@ public class ClienteController {
 
     // READ ALL - GET /api/clientes
     @GetMapping
+    @Operation(summary = "Listar Clientes", description = "Obtiene todos los clientes activos. Permite filtrar por nombre, email y ciudad.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de clientes recuperada exitosamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarTodos(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String email,
@@ -78,6 +95,13 @@ public class ClienteController {
 
     // UPDATE - PUT /api/clientes/{id}
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del cliente (reemplazo completo)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
         try {
             Cliente actualizado = clienteService.actualizar(id, clienteActualizado);
@@ -99,6 +123,12 @@ public class ClienteController {
 
     // DELETE - DELETE /api/clientes/{id}
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar Cliente", description = "Soft delete: marca el cliente como inactivo (activo=false)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Cliente eliminado (inactivado) correctamente"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             clienteService.eliminar(id);
@@ -118,8 +148,9 @@ public class ClienteController {
         }
     }
 
+    // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente un cliente")
+    @Operation(summary = "Actualizar parcialmente un cliente", description = "Actualiza solo los campos proporcionados, manteniendo el resto igual.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente actualizado parcialmente"),
             @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),

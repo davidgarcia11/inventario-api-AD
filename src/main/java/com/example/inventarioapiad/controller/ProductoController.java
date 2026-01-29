@@ -23,6 +23,12 @@ public class ProductoController {
 
     // CREATE - POST /api/productos
     @PostMapping
+    @Operation(summary = "Crear Producto", description = "Crea un nuevo producto. Campos obligatorios: nombre, sku, precioVenta, stockTotal")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Producto creado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, precio negativo, etc.)"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> crear(@RequestBody Producto producto) {
         try {
             Producto creado = productoService.crear(producto);
@@ -40,6 +46,12 @@ public class ProductoController {
 
     // READ - GET /api/productos/{id}
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener Producto por ID", description = "Obtiene un producto específico por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Producto encontrado"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             Producto producto = productoService.buscarPorId(id);
@@ -61,6 +73,11 @@ public class ProductoController {
 
     // READ ALL - GET /api/productos
     @GetMapping
+    @Operation(summary = "Listar Productos", description = "Obtiene todos los productos activos. Permite filtrar por nombre, sku y precioVenta.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de productos recuperada exitosamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarTodos(
             @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String sku,
@@ -78,6 +95,13 @@ public class ProductoController {
 
     // UPDATE - PUT /api/productos/{id}
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del producto (reemplazo completo)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Producto productoActualizado) {
         try {
             Producto actualizado = productoService.actualizar(id, productoActualizado);
@@ -99,6 +123,12 @@ public class ProductoController {
 
     // DELETE - DELETE /api/productos/{id}
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar Producto", description = "Soft delete: marca el producto como inactivo (activo=false)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Producto eliminado (inactivado) correctamente"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             productoService.eliminar(id);
@@ -119,8 +149,7 @@ public class ProductoController {
     }
 
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente un producto",
-            description = "Actualiza solo los campos proporcionados, sin cambiar los demás")
+    @Operation(summary = "Actualizar parcialmente un producto", description = "Actualiza solo los campos proporcionados, sin cambiar los demás")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Producto actualizado parcialmente"),
             @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
@@ -176,6 +205,4 @@ public class ProductoController {
         public int getCodigo() { return codigo; }
         public String getMensaje() { return mensaje; }
     }
-
-
 }

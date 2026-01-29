@@ -23,6 +23,12 @@ public class VentaController {
 
     // CREATE - POST /api/ventas
     @PostMapping
+    @Operation(summary = "Registrar Venta", description = "Crea un nuevo registro de venta. Campos obligatorios: cliente, producto, almacen, cantidad, precioUnitario.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Venta registrada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (cantidad negativa, cliente/producto no existe, etc.)"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> crear(@RequestBody Venta venta) {
         try {
             Venta creada = ventaService.crear(venta);
@@ -40,6 +46,12 @@ public class VentaController {
 
     // READ - GET /api/ventas/{id}
     @GetMapping("/{id}")
+    @Operation(summary = "Obtener Venta por ID", description = "Obtiene los detalles de una venta específica por su ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Venta encontrada"),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
             Venta venta = ventaService.buscarPorId(id);
@@ -61,6 +73,11 @@ public class VentaController {
 
     // READ ALL - GET /api/ventas
     @GetMapping
+    @Operation(summary = "Listar Ventas", description = "Obtiene todas las ventas registradas. Permite filtrar por estado, cantidad y número de pedido.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de ventas recuperada exitosamente"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> buscarTodos(
             @RequestParam(required = false) String estado,
             @RequestParam(required = false) Integer cantidad,
@@ -78,6 +95,13 @@ public class VentaController {
 
     // UPDATE - PUT /api/ventas/{id}
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos de la venta (reemplazo completo)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Venta actualizada exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Venta ventaActualizada) {
         try {
             Venta actualizada = ventaService.actualizar(id, ventaActualizada);
@@ -99,6 +123,12 @@ public class VentaController {
 
     // DELETE - DELETE /api/ventas/{id}
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar Venta", description = "Soft delete: Marca la venta como inactiva (activo=false) o cancelada.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Venta eliminada (inactivada) correctamente"),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             ventaService.eliminar(id);
@@ -118,8 +148,9 @@ public class VentaController {
         }
     }
 
+    // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente una venta")
+    @Operation(summary = "Actualizar parcialmente una venta", description = "Actualiza solo los campos proporcionados (ej: cambiar estado, corregir cantidad).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Venta actualizada parcialmente"),
             @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
