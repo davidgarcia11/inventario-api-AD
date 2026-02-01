@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/precios/NO-EXISTE"
+  },
+  "response": {
+    "status": 404,
+    "jsonBody": {
+      "codigo": 404,
+      "mensaje": "El recurso externo no fue encontrado"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

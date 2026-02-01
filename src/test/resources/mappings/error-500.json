@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/precios/ERROR-SERVER"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error interno del servidor externo simulado"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

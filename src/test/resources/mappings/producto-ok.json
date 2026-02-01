@@ -1,0 +1,16 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/precios/TORNILLO-M10"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "sku": "TORNILLO-M10",
+      "precio": 1.25
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
