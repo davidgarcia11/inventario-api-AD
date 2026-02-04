@@ -1,0 +1,42 @@
+{
+  "info": {
+    "_postman_id": "wm-standalone-8081",
+    "name": "WireMock - API EXTERNA (Simulación)",
+    "description": "Pruebas directas al servidor WireMock Standalone (Puerto 8081) para validar los contratos externos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Obtener Impuestos (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8081/api/impuestos"
+      }
+    },
+    {
+      "name": "2. Obtener Precio Producto (200 OK)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8081/api/precios/TORNILLO-M10"
+      }
+    },
+    {
+      "name": "3. Error Recurso No Existe (404 Not Found)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8081/api/precios/NO-EXISTE"
+      }
+    },
+    {
+      "name": "4. Error Interno Servidor (500 Error)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:8081/api/precios/ERROR-SERVER"
+      }
+    }
+  ]
+}
