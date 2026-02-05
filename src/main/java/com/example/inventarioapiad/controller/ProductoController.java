@@ -210,7 +210,14 @@ public class ProductoController {
                                       "mensaje": "No se puede actualizar. Producto no encontrado con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al actualizar el producto"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Producto productoActualizado) {
         try {
@@ -244,7 +251,14 @@ public class ProductoController {
                                       "mensaje": "No se puede eliminar. Producto no encontrado con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al eliminar el producto"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -288,7 +302,14 @@ public class ProductoController {
                                       "mensaje": "Producto no encontrado"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al actualizar parcialmente"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizarParcial(
             @Parameter(description = "ID del producto a modificar", example = "1")

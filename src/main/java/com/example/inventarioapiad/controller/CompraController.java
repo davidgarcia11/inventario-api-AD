@@ -105,7 +105,14 @@ public class CompraController {
                                       "mensaje": "Compra no encontrada con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error de conexión con la base de datos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -213,7 +220,14 @@ public class CompraController {
                                       "mensaje": "No se puede actualizar. Compra no encontrada con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al actualizar la compra"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Compra compraActualizada) {
         try {
@@ -247,7 +261,14 @@ public class CompraController {
                                       "mensaje": "No se puede eliminar. Compra no encontrada con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al eliminar la compra"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -291,7 +312,14 @@ public class CompraController {
                                       "mensaje": "Compra no encontrada"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al actualizar parcialmente"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizarParcial(
             @Parameter(description = "ID de la compra a modificar", example = "1")

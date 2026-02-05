@@ -1,0 +1,1271 @@
+{
+  "info": {
+    "_postman_id": "cfa390e2-9602-4192-9ea6-f77dab6b17ae",
+    "name": "Inventario API - COMPLETA (con PATCH) Copy",
+    "description": "Colección completa con 42 endpoints: CRUD + PATCH para las 6 entidades",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41736821"
+  },
+  "item": [
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "1. Crear Producto (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tornillo M10\",\n  \"sku\": \"TORNILLO-M10\",\n  \"precioCosto\": 0.50,\n  \"precioVenta\": 1.25,\n  \"stockTotal\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "Crea un nuevo producto. Campos obligatorios: nombre, sku, precioVenta, stockTotal"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Producto por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            },
+            "description": "Obtiene un producto específico por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar Productos (GET - sin filtro)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "Obtiene todos los productos activos"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Filtrar por Nombre (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/productos?nombre=Tornillo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Tornillo"
+                }
+              ]
+            },
+            "description": "Filtra productos por nombre (contiene)"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Filtrar por Precio (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/productos?precioVenta=1.0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "precioVenta",
+                  "value": "1.0"
+                }
+              ]
+            },
+            "description": "Filtra productos con precio >= valor especificado"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar Completo (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tornillo M12\",\n  \"sku\": \"TORNILLO-M12\",\n  \"precioVenta\": 1.50,\n  \"stockTotal\": 150\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            },
+            "description": "Actualiza todos los campos del producto (reemplazo completo)"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Parcial (PATCH) ⭐",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precioVenta\": 1.75\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            },
+            "description": "Actualiza SOLO los campos enviados (actualización parcial). El resto de campos se preservan."
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Producto (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            },
+            "description": "Soft delete: marca el producto como inactivo (activo=false)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Almacenes",
+      "item": [
+        {
+          "name": "1. Crear Almacén (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Barcelona\",\n  \"capacidadMaxima\": 10000,\n  \"stockActual\": 5000\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Almacén por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Filtrar por Ubicación (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes?ubicacion=Barcelona",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes"
+              ],
+              "query": [
+                {
+                  "key": "ubicacion",
+                  "value": "Barcelona"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Filtrar por Capacidad (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes?capacidadMaxima=8000",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes"
+              ],
+              "query": [
+                {
+                  "key": "capacidadMaxima",
+                  "value": "8000"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar Almacenes (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar Completo (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Madrid\",\n  \"ubicacion\": \"Madrid\",\n  \"capacidadMaxima\": 12000\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Parcial (PATCH) ⭐",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stockActual\": 6000\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Almacén (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Proveedores",
+      "item": [
+        {
+          "name": "1. Crear Proveedor (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Aceros García\",\n  \"email\": \"contacto@acerosgarcia.com\",\n  \"telefono\": \"912345678\",\n  \"diasEntrega\": 3\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Proveedor por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar Proveedores (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Filtrar por Nombre (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores?nombre=Aceros",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Aceros"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Filtrar por Días Entrega (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores?diasEntrega=5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores"
+              ],
+              "query": [
+                {
+                  "key": "diasEntrega",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar Completo (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Aceros López\",\n  \"email\": \"contacto@aceroslopez.com\",\n  \"diasEntrega\": 5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Parcial (PATCH) ⭐",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"diasEntrega\": 2\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Proveedor (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Clientes",
+      "item": [
+        {
+          "name": "1. Crear Cliente (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Constructora López\",\n  \"email\": \"ventas@constructoralopez.com\",\n  \"telefono\": \"913456789\",\n  \"ciudad\": \"Barcelona\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Cliente por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar Clientes (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Filtrar por Ciudad (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/clientes?ciudad=Barcelona",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes"
+              ],
+              "query": [
+                {
+                  "key": "ciudad",
+                  "value": "Barcelona"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Filtrar por Email (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/clientes?email=constructora",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "constructora"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar Completo (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Constructora García\",\n  \"email\": \"ventas@constructoragarcia.com\",\n  \"ciudad\": \"Madrid\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Parcial (PATCH) ⭐",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"914567890\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Cliente (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Compras",
+      "item": [
+        {
+          "name": "1. Crear Compra (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 100,\n  \"precioUnitario\": 0.50,\n  \"fechaCompra\": \"2025-01-21T10:30:00\",\n  \"numeroFactura\": \"FAC-2025-001\",\n  \"estado\": \"RECIBIDA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/compras",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras"
+              ]
+            },
+            "description": "IMPORTANTE: Primero crea Proveedor (id:1), Producto (id:1) y Almacén (id:1). Las relaciones se envían como objetos con solo el 'id'."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Compra por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar Compras (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/compras",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Filtrar por Estado (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/compras?estado=RECIBIDA",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "RECIBIDA"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Filtrar por Cantidad (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/compras?cantidad=50",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras"
+              ],
+              "query": [
+                {
+                  "key": "cantidad",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar Completo (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 150,\n  \"precioUnitario\": 0.55,\n  \"fechaCompra\": \"2025-01-21T11:00:00\",\n  \"numeroFactura\": \"FAC-2025-001\",\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Parcial (PATCH) ⭐",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Compra (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            },
+            "description": "Marca la compra como estado=CANCELADA"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Ventas",
+      "item": [
+        {
+          "name": "1. Crear Venta (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 50,\n  \"precioUnitario\": 1.50,\n  \"fechaVenta\": \"2025-01-21T10:30:00\",\n  \"numeroPedido\": \"PED-2025-0001\",\n  \"estado\": \"ENTREGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas"
+              ]
+            },
+            "description": "IMPORTANTE: Primero crea Cliente (id:1), Producto (id:1) y Almacén (id:1). Las relaciones se envían como objetos con solo el 'id'."
+          },
+          "response": []
+        },
+        {
+          "name": "2. Obtener Venta por ID (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Listar Ventas (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Filtrar por Estado (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/ventas?estado=ENTREGADA",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "ENTREGADA"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Filtrar por Cantidad (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/ventas?cantidad=20",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas"
+              ],
+              "query": [
+                {
+                  "key": "cantidad",
+                  "value": "20"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Actualizar Completo (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 75,\n  \"precioUnitario\": 1.75,\n  \"fechaVenta\": \"2025-01-21T11:00:00\",\n  \"numeroPedido\": \"PED-2025-0001\",\n  \"estado\": \"FACTURADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Actualizar Parcial (PATCH) ⭐",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"FACTURADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Eliminar Venta (DELETE)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            },
+            "description": "Marca la venta como estado=CANCELADA"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

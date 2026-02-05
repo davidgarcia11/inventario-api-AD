@@ -1,0 +1,79 @@
+{
+  "info": {
+    "_postman_id": "wm-full-crud",
+    "name": "WireMock - SIMULACIÓN COMPLETA (CRUD)",
+    "description": "Pruebas de todos los verbos HTTP contra el servidor Mock en el puerto 8081.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. GET - Consultar Impuestos (Existente)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8081/api/impuestos",
+        "description": "Debe devolver 200 OK y valor 21"
+      }
+    },
+    {
+      "name": "2. POST - Crear Producto (Simulado)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"nombre\": \"Nuevo\",\n    \"sku\": \"WM-NEW\",\n    \"precioVenta\": 50.0\n}"
+        },
+        "url": "http://localhost:8081/api/productos",
+        "description": "Debe devolver 201 Created y el JSON definido en producto-create.json"
+      }
+    },
+    {
+      "name": "3. PUT - Actualizar Producto (Simulado)",
+      "request": {
+        "method": "PUT",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"nombre\": \"Modificado\",\n    \"sku\": \"WM-MOD\",\n    \"precioVenta\": 60.0\n}"
+        },
+        "url": "http://localhost:8081/api/productos/100",
+        "description": "Debe devolver 200 OK y el JSON definido en producto-update.json"
+      }
+    },
+    {
+      "name": "4. PATCH - Actualizar Precio (Simulado)",
+      "request": {
+        "method": "PATCH",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"precioVenta\": 99.99\n}"
+        },
+        "url": "http://localhost:8081/api/productos/100",
+        "description": "Debe devolver 200 OK y el JSON definido en producto-patch.json"
+      }
+    },
+    {
+      "name": "5. DELETE - Eliminar Producto (Simulado)",
+      "request": {
+        "method": "DELETE",
+        "url": "http://localhost:8081/api/productos/100",
+        "description": "Debe devolver 204 No Content definido en producto-delete.json"
+      }
+    },
+    {
+      "name": "6. ERROR - Simular 404 (Existente)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8081/api/precios/NO-EXISTE"
+      }
+    },
+    {
+      "name": "7. ERROR - Simular 500 (Existente)",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:8081/api/precios/ERROR-SERVER"
+      }
+    }
+  ]
+}

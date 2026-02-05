@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/productos/100"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 100,
+      "nombre": "Producto Modificado Total",
+      "sku": "WM-100-MOD",
+      "precioVenta": 60.00,
+      "stockTotal": 20,
+      "activo": true
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

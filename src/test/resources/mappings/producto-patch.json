@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/api/productos/100"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 100,
+      "nombre": "Producto Simulado WireMock",
+      "precioVenta": 99.99,
+      "activo": true
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

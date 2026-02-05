@@ -209,7 +209,14 @@ public class ProveedorController {
                                       "mensaje": "No se puede actualizar. Proveedor no encontrado con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al actualizar el proveedor"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Proveedor proveedorActualizado) {
         try {
@@ -243,7 +250,14 @@ public class ProveedorController {
                                       "mensaje": "No se puede eliminar. Proveedor no encontrado con ID: 1"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al eliminar el proveedor"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
@@ -287,7 +301,14 @@ public class ProveedorController {
                                       "mensaje": "Proveedor no encontrado"
                                     }
                                     """))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al actualizar parcialmente"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizarParcial(
             @Parameter(description = "ID del proveedor a modificar", example = "1")
