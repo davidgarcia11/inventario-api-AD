@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,11 +25,38 @@ public class ClienteController {
 
     // CREATE - POST /api/clientes
     @PostMapping
-    @Operation(summary = "Crear Cliente", description = "Crea un nuevo cliente. Campos obligatorios: nombre, email.")
+    @Operation(summary = "Crear Cliente", description = "Crea un nuevo cliente en la base de datos. Campos obligatorios: nombre, email.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, email inválido, etc.)"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Cliente.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Juan Pérez",
+                                      "email": "juan.perez@email.com",
+                                      "telefono": "600123456",
+                                      "direccion": "Calle Mayor 10",
+                                      "ciudad": "Madrid",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, email inválido, etc.)",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El email del cliente es obligatorio"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al guardar el cliente"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> crear(@RequestBody Cliente cliente) {
         try {
@@ -47,11 +75,38 @@ public class ClienteController {
 
     // READ - GET /api/clientes/{id}
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener Cliente por ID", description = "Obtiene un cliente específico por su ID")
+    @Operation(summary = "Obtener Cliente por ID", description = "Obtiene un cliente específico buscando por su identificador único.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Cliente.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Juan Pérez",
+                                      "email": "juan.perez@email.com",
+                                      "telefono": "600123456",
+                                      "direccion": "Calle Mayor 10",
+                                      "ciudad": "Madrid",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Cliente no encontrado con ID: 1"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error de conexión con la base de datos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -74,15 +129,42 @@ public class ClienteController {
 
     // READ ALL - GET /api/clientes
     @GetMapping
-    @Operation(summary = "Listar Clientes", description = "Obtiene todos los clientes activos. Permite filtrar por nombre, email y ciudad.")
+    @Operation(summary = "Listar Clientes (con filtros)", description = "Obtiene todos los clientes activos. Permite filtrar por nombre, email y ciudad.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de clientes recuperada exitosamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Lista de clientes recuperada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Cliente.class),
+                            examples = @ExampleObject(value = """
+                                    [
+                                      {
+                                        "id": 1,
+                                        "nombre": "Juan Pérez",
+                                        "email": "juan@email.com",
+                                        "ciudad": "Madrid",
+                                        "activo": true
+                                      },
+                                      {
+                                        "id": 2,
+                                        "nombre": "Ana García",
+                                        "email": "ana@email.com",
+                                        "ciudad": "Barcelona",
+                                        "activo": true
+                                      }
+                                    ]
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al filtrar clientes"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarTodos(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String ciudad) {
+            @Parameter(description = "Filtrar por nombre (contiene)") @RequestParam(required = false) String nombre,
+            @Parameter(description = "Filtrar por email (contiene)") @RequestParam(required = false) String email,
+            @Parameter(description = "Filtrar por ciudad (contiene)") @RequestParam(required = false) String ciudad) {
 
         try {
             List<Cliente> clientes = clienteService.buscarConFiltros(nombre, email, ciudad);
@@ -96,11 +178,36 @@ public class ClienteController {
 
     // UPDATE - PUT /api/clientes/{id}
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del cliente (reemplazo completo)")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del cliente. Si un campo no se envía, se podría perder o poner a null.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Cliente.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Juan Pérez Actualizado",
+                                      "email": "juan.nuevo@email.com",
+                                      "ciudad": "Valencia",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El nombre no puede estar vacío"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede actualizar. Cliente no encontrado con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
@@ -124,10 +231,17 @@ public class ClienteController {
 
     // DELETE - DELETE /api/clientes/{id}
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar Cliente", description = "Soft delete: marca el cliente como inactivo (activo=false)")
+    @Operation(summary = "Eliminar Cliente", description = "Realiza un borrado lógico (Soft Delete): marca el cliente como inactivo (activo=false).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Cliente eliminado (inactivado) correctamente"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "204", description = "Cliente eliminado correctamente (Sin contenido)"),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede eliminar. Cliente no encontrado con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
@@ -151,14 +265,33 @@ public class ClienteController {
 
     // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente un cliente", description = "Actualiza solo los campos proporcionados, manteniendo el resto igual.")
+    @Operation(summary = "Actualizar Parcialmente (PATCH)", description = "Actualiza solo los campos proporcionados en el JSON, manteniendo el resto con su valor actual.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Cliente actualizado parcialmente"),
-            @ApiResponse(responseCode = "404", description = "Cliente no encontrado"),
+            @ApiResponse(responseCode = "200", description = "Cliente actualizado parcialmente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Cliente.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Juan Pérez",
+                                      "email": "juan.nuevo@email.com",
+                                      "telefono": "600123456",
+                                      "ciudad": "Madrid",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Cliente no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Cliente no encontrado"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizarParcial(
-            @Parameter(description = "ID del cliente", example = "1")
+            @Parameter(description = "ID del cliente a modificar", example = "1")
             @PathVariable Long id,
             @RequestBody Cliente clienteActualizado) {
         try {

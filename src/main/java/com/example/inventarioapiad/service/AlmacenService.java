@@ -121,7 +121,7 @@ public class AlmacenService {
 
         if (capacidadMaxima != null) {
             almacenes = almacenes.stream()
-                    .filter(a -> a.getCapacidadMaxima() >= capacidadMaxima)
+                    .filter(a -> a.getCapacidadMaxima().equals(capacidadMaxima))
                     .collect(Collectors.toList());
         }
 

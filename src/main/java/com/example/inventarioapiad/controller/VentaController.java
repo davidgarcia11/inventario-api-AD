@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,9 +27,39 @@ public class VentaController {
     @PostMapping
     @Operation(summary = "Registrar Venta", description = "Crea un nuevo registro de venta. Campos obligatorios: cliente, producto, almacen, cantidad, precioUnitario.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Venta registrada exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos (cantidad negativa, cliente/producto no existe, etc.)"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "201", description = "Venta registrada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Venta.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "cliente": { "id": 1, "nombre": "Juan Pérez" },
+                                      "producto": { "id": 5, "nombre": "Tornillo M10" },
+                                      "almacen": { "id": 2, "nombre": "Almacén Central" },
+                                      "cantidad": 50,
+                                      "precioUnitario": 2.50,
+                                      "fechaVenta": "2025-02-21T16:30:00",
+                                      "numeroPedido": "PED-2025-001",
+                                      "estado": "ENTREGADA",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (cantidad negativa, cliente/producto no existe, etc.)",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El stock disponible no es suficiente para realizar la venta"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al procesar la venta"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> crear(@RequestBody Venta venta) {
         try {
@@ -47,11 +78,41 @@ public class VentaController {
 
     // READ - GET /api/ventas/{id}
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener Venta por ID", description = "Obtiene los detalles de una venta específica por su ID")
+    @Operation(summary = "Obtener Venta por ID", description = "Obtiene los detalles completos de una venta específica por su ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Venta encontrada"),
-            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Venta encontrada",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Venta.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "cliente": { "id": 1, "nombre": "Juan Pérez" },
+                                      "producto": { "id": 5, "nombre": "Tornillo M10" },
+                                      "almacen": { "id": 2, "nombre": "Almacén Central" },
+                                      "cantidad": 50,
+                                      "precioUnitario": 2.50,
+                                      "fechaVenta": "2025-02-21T16:30:00",
+                                      "numeroPedido": "PED-2025-001",
+                                      "estado": "ENTREGADA",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Venta no encontrada con ID: 1"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error de conexión con la base de datos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -74,15 +135,44 @@ public class VentaController {
 
     // READ ALL - GET /api/ventas
     @GetMapping
-    @Operation(summary = "Listar Ventas", description = "Obtiene todas las ventas registradas. Permite filtrar por estado, cantidad y número de pedido.")
+    @Operation(summary = "Listar Ventas (con filtros)", description = "Obtiene todas las ventas registradas. Permite filtrar por estado exacto, cantidad exacta y número de pedido.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de ventas recuperada exitosamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Lista de ventas recuperada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Venta.class),
+                            examples = @ExampleObject(value = """
+                                    [
+                                      {
+                                        "id": 1,
+                                        "cliente": { "id": 1, "nombre": "Juan Pérez" },
+                                        "cantidad": 50,
+                                        "numeroPedido": "PED-001",
+                                        "estado": "ENTREGADA",
+                                        "activo": true
+                                      },
+                                      {
+                                        "id": 2,
+                                        "cliente": { "id": 2, "nombre": "Empresa S.A." },
+                                        "cantidad": 100,
+                                        "numeroPedido": "PED-002",
+                                        "estado": "PENDIENTE",
+                                        "activo": true
+                                      }
+                                    ]
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al filtrar las ventas"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarTodos(
-            @RequestParam(required = false) String estado,
-            @RequestParam(required = false) Integer cantidad,
-            @RequestParam(required = false) String numeroPedido) {
+            @Parameter(description = "Filtrar por estado exacto (ej: ENTREGADA, PENDIENTE)") @RequestParam(required = false) String estado,
+            @Parameter(description = "Filtrar por cantidad exacta") @RequestParam(required = false) Integer cantidad,
+            @Parameter(description = "Filtrar por número de pedido (contiene)") @RequestParam(required = false) String numeroPedido) {
 
         try {
             List<Venta> ventas = ventaService.buscarConFiltros(estado, cantidad, numeroPedido);
@@ -96,11 +186,40 @@ public class VentaController {
 
     // UPDATE - PUT /api/ventas/{id}
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos de la venta (reemplazo completo)")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos de la venta (reemplazo completo).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Venta actualizada exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "200", description = "Venta actualizada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Venta.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "cliente": { "id": 1 },
+                                      "producto": { "id": 5 },
+                                      "almacen": { "id": 2 },
+                                      "cantidad": 60,
+                                      "precioUnitario": 2.40,
+                                      "numeroPedido": "PED-001-MOD",
+                                      "estado": "FACTURADA",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "La cantidad no puede ser negativa"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede actualizar. Venta no encontrada con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Venta ventaActualizada) {
@@ -124,10 +243,17 @@ public class VentaController {
 
     // DELETE - DELETE /api/ventas/{id}
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar Venta", description = "Soft delete: Marca la venta como inactiva (activo=false) o cancelada.")
+    @Operation(summary = "Eliminar Venta", description = "Realiza un borrado lógico (Soft Delete): Marca la venta como inactiva (activo=false) o cancelada.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Venta eliminada (inactivada) correctamente"),
-            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede eliminar. Venta no encontrada con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
@@ -151,14 +277,31 @@ public class VentaController {
 
     // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente una venta", description = "Actualiza solo los campos proporcionados (ej: cambiar estado, corregir cantidad).")
+    @Operation(summary = "Actualizar Parcialmente (PATCH)", description = "Actualiza solo los campos proporcionados (ej: cambiar estado o corregir cantidad).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Venta actualizada parcialmente"),
-            @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+            @ApiResponse(responseCode = "200", description = "Venta actualizada parcialmente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Venta.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "numeroPedido": "PED-001",
+                                      "estado": "FACTURADA",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Venta no encontrada",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Venta no encontrada"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizarParcial(
-            @Parameter(description = "ID de la venta", example = "1")
+            @Parameter(description = "ID de la venta a modificar", example = "1")
             @PathVariable Long id,
             @RequestBody Venta ventaActualizada) {
         try {

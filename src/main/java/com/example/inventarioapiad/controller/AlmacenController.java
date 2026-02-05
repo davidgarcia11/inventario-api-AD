@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,11 +25,38 @@ public class AlmacenController {
 
     // CREATE - POST /api/almacenes
     @PostMapping
-    @Operation(summary = "Crear Almacén", description = "Crea un nuevo almacén. Campos obligatorios: nombre, ubicacion.")
+    @Operation(summary = "Crear Almacén", description = "Crea un nuevo almacén en la base de datos. Campos obligatorios: nombre, ubicacion.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Almacén creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, capacidad negativa, etc.)"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "201", description = "Almacén creado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Almacen.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Almacén Central",
+                                      "ubicacion": "Madrid",
+                                      "capacidadMaxima": 10000,
+                                      "stockActual": 500,
+                                      "responsable": "Carlos Ruiz",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, capacidad negativa, etc.)",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El nombre del almacén es obligatorio"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al guardar en base de datos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> crear(@RequestBody Almacen almacen) {
         try {
@@ -47,11 +75,38 @@ public class AlmacenController {
 
     // READ - GET /api/almacenes/{id}
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener Almacén por ID", description = "Obtiene un almacén específico por su ID")
+    @Operation(summary = "Obtener Almacén por ID", description = "Obtiene un almacén específico buscando por su identificador único.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Almacén encontrado"),
-            @ApiResponse(responseCode = "404", description = "Almacén no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Almacén encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Almacen.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Almacén Central",
+                                      "ubicacion": "Madrid",
+                                      "capacidadMaxima": 10000,
+                                      "stockActual": 500,
+                                      "responsable": "Carlos Ruiz",
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Almacén no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Almacén no encontrado con ID: 1"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error de conexión con la base de datos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -74,15 +129,44 @@ public class AlmacenController {
 
     // READ ALL - GET /api/almacenes
     @GetMapping
-    @Operation(summary = "Listar Almacenes", description = "Obtiene todos los almacenes activos. Permite filtrar por nombre, ubicación y capacidad máxima.")
+    @Operation(summary = "Listar Almacenes (con filtros)", description = "Obtiene todos los almacenes activos. Permite filtrar por nombre, ubicación y capacidad máxima.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de almacenes recuperada exitosamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Lista de almacenes recuperada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Almacen.class),
+                            examples = @ExampleObject(value = """
+                                    [
+                                      {
+                                        "id": 1,
+                                        "nombre": "Almacén Norte",
+                                        "ubicacion": "Bilbao",
+                                        "capacidadMaxima": 5000,
+                                        "stockActual": 1200,
+                                        "activo": true
+                                      },
+                                      {
+                                        "id": 2,
+                                        "nombre": "Almacén Sur",
+                                        "ubicacion": "Sevilla",
+                                        "capacidadMaxima": 8000,
+                                        "stockActual": 3000,
+                                        "activo": true
+                                      }
+                                    ]
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al recuperar la lista de almacenes"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarTodos(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String ubicacion,
-            @RequestParam(required = false) Integer capacidadMaxima) {
+            @Parameter(description = "Filtrar por nombre (contiene)") @RequestParam(required = false) String nombre,
+            @Parameter(description = "Filtrar por ubicación (contiene)") @RequestParam(required = false) String ubicacion,
+            @Parameter(description = "Filtrar por capacidad máxima exacta") @RequestParam(required = false) Integer capacidadMaxima) {
 
         try {
             List<Almacen> almacenes = almacenService.buscarConFiltros(nombre, ubicacion, capacidadMaxima);
@@ -96,11 +180,36 @@ public class AlmacenController {
 
     // UPDATE - PUT /api/almacenes/{id}
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del almacén (reemplazo completo)")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del almacén. Si un campo no se envía, se podría perder o poner a null.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Almacén actualizado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Almacén no encontrado"),
+            @ApiResponse(responseCode = "200", description = "Almacén actualizado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Almacen.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Almacén Central Renovado",
+                                      "ubicacion": "Madrid Norte",
+                                      "capacidadMaxima": 15000,
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "La capacidad máxima no puede ser negativa"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Almacén no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede actualizar. Almacén no encontrado con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Almacen almacenActualizado) {
@@ -124,10 +233,17 @@ public class AlmacenController {
 
     // DELETE - DELETE /api/almacenes/{id}
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar Almacén", description = "Soft delete: marca el almacén como inactivo (activo=false)")
+    @Operation(summary = "Eliminar Almacén", description = "Realiza un borrado lógico (Soft Delete): marca el almacén como inactivo (activo=false).")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Almacén eliminado (inactivado) correctamente"),
-            @ApiResponse(responseCode = "404", description = "Almacén no encontrado"),
+            @ApiResponse(responseCode = "204", description = "Almacén eliminado correctamente (Sin contenido)"),
+            @ApiResponse(responseCode = "404", description = "Almacén no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede eliminar. Almacén no encontrado con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
@@ -151,14 +267,32 @@ public class AlmacenController {
 
     // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente un almacén", description = "Actualiza solo los campos proporcionados, manteniendo el resto igual.")
+    @Operation(summary = "Actualizar Parcialmente (PATCH)", description = "Actualiza solo los campos proporcionados en el JSON, manteniendo el resto con su valor actual.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Almacén actualizado parcialmente"),
-            @ApiResponse(responseCode = "404", description = "Almacén no encontrado"),
+            @ApiResponse(responseCode = "200", description = "Almacén actualizado parcialmente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Almacen.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Almacén Central",
+                                      "ubicacion": "Nueva Ubicación",
+                                      "capacidadMaxima": 10000,
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Almacén no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Almacén no encontrado"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizarParcial(
-            @Parameter(description = "ID del almacén", example = "1")
+            @Parameter(description = "ID del almacén a modificar", example = "1")
             @PathVariable Long id,
             @RequestBody Almacen almacenActualizado) {
         try {

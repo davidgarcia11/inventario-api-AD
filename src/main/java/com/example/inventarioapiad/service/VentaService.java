@@ -136,7 +136,7 @@ public class VentaService {
 
         if (cantidad != null) {
             ventas = ventas.stream()
-                    .filter(v -> v.getCantidad() >= cantidad)
+                    .filter(v -> v.getCantidad().equals(cantidad))
                     .collect(Collectors.toList());
         }
 

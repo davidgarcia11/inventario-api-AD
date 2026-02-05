@@ -130,7 +130,7 @@ public class CompraService {
 
         if (cantidad != null) {
             compras = compras.stream()
-                    .filter(c -> c.getCantidad() >= cantidad)
+                    .filter(c -> c.getCantidad().equals(cantidad))
                     .collect(Collectors.toList());
         }
 

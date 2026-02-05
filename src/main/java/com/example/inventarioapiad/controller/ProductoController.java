@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,11 +25,38 @@ public class ProductoController {
 
     // CREATE - POST /api/productos
     @PostMapping
-    @Operation(summary = "Crear Producto", description = "Crea un nuevo producto. Campos obligatorios: nombre, sku, precioVenta, stockTotal")
+    @Operation(summary = "Crear Producto", description = "Crea un nuevo producto en la base de datos. Campos obligatorios: nombre, sku, precioVenta, stockTotal.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Producto creado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, precio negativo, etc.)"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "201", description = "Producto creado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Producto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Tornillo M10",
+                                      "sku": "TOR-M10",
+                                      "precioCosto": 0.50,
+                                      "precioVenta": 1.25,
+                                      "stockTotal": 100,
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (nombre vacío, precio negativo, etc.)",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El SKU es obligatorio y no puede estar vacío"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error interno al guardar el producto"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> crear(@RequestBody Producto producto) {
         try {
@@ -47,11 +75,38 @@ public class ProductoController {
 
     // READ - GET /api/productos/{id}
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener Producto por ID", description = "Obtiene un producto específico por su ID")
+    @Operation(summary = "Obtener Producto por ID", description = "Obtiene los detalles de un producto específico por su ID.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Producto encontrado"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Producto encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Producto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Tornillo M10",
+                                      "sku": "TOR-M10",
+                                      "precioCosto": 0.50,
+                                      "precioVenta": 1.25,
+                                      "stockTotal": 100,
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Producto no encontrado con ID: 1"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error de conexión con la base de datos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
         try {
@@ -74,15 +129,44 @@ public class ProductoController {
 
     // READ ALL - GET /api/productos
     @GetMapping
-    @Operation(summary = "Listar Productos", description = "Obtiene todos los productos activos. Permite filtrar por nombre, sku y precioVenta.")
+    @Operation(summary = "Listar Productos (con filtros)", description = "Obtiene todos los productos activos. Permite filtrar por nombre, sku y precioVenta exacto.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de productos recuperada exitosamente"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            @ApiResponse(responseCode = "200", description = "Lista de productos recuperada exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Producto.class),
+                            examples = @ExampleObject(value = """
+                                    [
+                                      {
+                                        "id": 1,
+                                        "nombre": "Tornillo M10",
+                                        "sku": "TOR-M10",
+                                        "precioVenta": 1.25,
+                                        "stockTotal": 100,
+                                        "activo": true
+                                      },
+                                      {
+                                        "id": 2,
+                                        "nombre": "Tuerca M10",
+                                        "sku": "TUE-M10",
+                                        "precioVenta": 0.50,
+                                        "stockTotal": 500,
+                                        "activo": true
+                                      }
+                                    ]
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al filtrar productos"
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> buscarTodos(
-            @RequestParam(required = false) String nombre,
-            @RequestParam(required = false) String sku,
-            @RequestParam(required = false) Float precioVenta) {
+            @Parameter(description = "Filtrar por nombre (contiene)") @RequestParam(required = false) String nombre,
+            @Parameter(description = "Filtrar por SKU (contiene)") @RequestParam(required = false) String sku,
+            @Parameter(description = "Filtrar por precio exacto") @RequestParam(required = false) Float precioVenta) {
 
         try {
             List<Producto> productos = productoService.buscarConFiltros(nombre, sku, precioVenta);
@@ -96,11 +180,36 @@ public class ProductoController {
 
     // UPDATE - PUT /api/productos/{id}
     @PutMapping("/{id}")
-    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del producto (reemplazo completo)")
+    @Operation(summary = "Actualizar Completo", description = "Actualiza todos los campos del producto. Si un campo no se envía, se podría perder o poner a null.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+            @ApiResponse(responseCode = "200", description = "Producto actualizado exitosamente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Producto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "nombre": "Tornillo M10 Inoxidable",
+                                      "sku": "TOR-M10-INOX",
+                                      "precioVenta": 2.50,
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El precio de venta debe ser mayor a 0"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede actualizar. Producto no encontrado con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Producto productoActualizado) {
@@ -124,10 +233,17 @@ public class ProductoController {
 
     // DELETE - DELETE /api/productos/{id}
     @DeleteMapping("/{id}")
-    @Operation(summary = "Eliminar Producto", description = "Soft delete: marca el producto como inactivo (activo=false)")
+    @Operation(summary = "Eliminar Producto", description = "Realiza un borrado lógico (Soft Delete): marca el producto como inactivo (activo=false).")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Producto eliminado (inactivado) correctamente"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "No se puede eliminar. Producto no encontrado con ID: 1"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> eliminar(@PathVariable Long id) {
@@ -149,15 +265,33 @@ public class ProductoController {
         }
     }
 
+    // PATCH - Actualización parcial
     @PatchMapping("/{id}")
-    @Operation(summary = "Actualizar parcialmente un producto", description = "Actualiza solo los campos proporcionados, sin cambiar los demás")
+    @Operation(summary = "Actualizar Parcialmente (PATCH)", description = "Actualiza solo los campos proporcionados en el JSON, manteniendo el resto con su valor actual.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Producto actualizado parcialmente"),
-            @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+            @ApiResponse(responseCode = "200", description = "Producto actualizado parcialmente",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Producto.class),
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "id": 1,
+                                      "precioVenta": 1.75,
+                                      "stockTotal": 150,
+                                      "activo": true
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Producto no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Producto no encontrado"
+                                    }
+                                    """))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     public ResponseEntity<?> actualizarParcial(
-            @Parameter(description = "ID del producto", example = "1")
+            @Parameter(description = "ID del producto a modificar", example = "1")
             @PathVariable Long id,
             @RequestBody Producto productoActualizado) {
         try {

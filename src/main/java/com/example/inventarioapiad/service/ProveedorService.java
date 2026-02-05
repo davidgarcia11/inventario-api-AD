@@ -120,7 +120,7 @@ public class ProveedorService {
 
         if (diasEntrega != null) {
             proveedores = proveedores.stream()
-                    .filter(p -> p.getDiasEntrega() <= diasEntrega)
+                    .filter(p -> p.getDiasEntrega().equals(diasEntrega))
                     .collect(Collectors.toList());
         }
 

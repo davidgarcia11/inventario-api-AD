@@ -133,7 +133,7 @@ public class ProductoService {
 
         if (precioVenta != null) {
             productos = productos.stream()
-                    .filter(p -> p.getPrecioVenta() >= precioVenta)
+                    .filter(p -> p.getPrecioVenta().equals(precioVenta))
                     .collect(Collectors.toList());
         }
 
