@@ -1,13 +1,13 @@
 {
   "request": {
-    "method": "GET",
-    "url": "/api/precios/NO-EXISTE"
+    "method": "DELETE",
+    "url": "/api/ventas/999"
   },
   "response": {
     "status": 404,
     "jsonBody": {
       "codigo": 404,
-      "mensaje": "El recurso externo no fue encontrado"
+      "mensaje": "No se puede eliminar. Venta no encontrada con ID: 999"
     },
     "headers": {
       "Content-Type": "application/json"

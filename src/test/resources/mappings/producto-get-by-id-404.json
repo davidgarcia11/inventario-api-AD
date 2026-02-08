@@ -1,13 +1,13 @@
 {
   "request": {
     "method": "GET",
-    "url": "/api/precios/NO-EXISTE"
+    "url": "/api/productos/999"
   },
   "response": {
     "status": 404,
     "jsonBody": {
       "codigo": 404,
-      "mensaje": "El recurso externo no fue encontrado"
+      "mensaje": "Producto no encontrado con ID: 999"
     },
     "headers": {
       "Content-Type": "application/json"

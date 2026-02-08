@@ -1,13 +1,13 @@
 {
   "request": {
     "method": "GET",
-    "url": "/api/precios/NO-EXISTE"
+    "url": "/api/precios/TORNILLO-M10"
   },
   "response": {
-    "status": 404,
+    "status": 200,
     "jsonBody": {
-      "codigo": 404,
-      "mensaje": "El recurso externo no fue encontrado"
+      "sku": "TORNILLO-M10",
+      "precio": 1.25
     },
     "headers": {
       "Content-Type": "application/json"

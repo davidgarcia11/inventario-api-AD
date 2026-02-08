@@ -1,0 +1,38 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/compras"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "id": 1,
+        "proveedor": { "id": 1, "nombre": "Aceros García" },
+        "producto": { "id": 1, "nombre": "Tornillo M10", "sku": "TOR-M10" },
+        "almacen": { "id": 2, "nombre": "Almacén Central" },
+        "cantidad": 100,
+        "precioUnitario": 0.50,
+        "fechaCompra": "2025-02-20T10:00:00",
+        "numeroFactura": "FAC-2025-001",
+        "estado": "RECIBIDA",
+        "fechaCreacion": "2025-02-20T10:00:00"
+      },
+      {
+        "id": 2,
+        "proveedor": { "id": 2, "nombre": "Tornillos España S.L." },
+        "producto": { "id": 2, "nombre": "Tuerca M10", "sku": "TUE-M10" },
+        "almacen": { "id": 1, "nombre": "Almacén Norte" },
+        "cantidad": 500,
+        "precioUnitario": 0.20,
+        "fechaCompra": "2025-02-20T11:00:00",
+        "numeroFactura": "FAC-2025-002",
+        "estado": "PENDIENTE",
+        "fechaCreacion": "2025-02-20T11:00:00"
+      }
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

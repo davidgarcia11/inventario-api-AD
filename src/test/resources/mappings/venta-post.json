@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/ventas"
+  },
+  "response": {
+    "status": 201,
+    "jsonBody": {
+      "id": 3,
+      "cliente": { "id": 3, "nombre": "Reformas Martínez" },
+      "producto": { "id": 3, "nombre": "Arandela M10", "sku": "ARA-M10" },
+      "almacen": { "id": 3, "nombre": "Almacén Sur" },
+      "cantidad": 200,
+      "precioUnitario": 0.30,
+      "fechaVenta": "2025-02-21T18:00:00",
+      "numeroPedido": "PED-2025-003",
+      "estado": "PENDIENTE",
+      "fechaCreacion": "2025-02-21T18:00:00"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

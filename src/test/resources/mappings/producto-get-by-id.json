@@ -1,6 +1,6 @@
 {
   "request": {
-    "method": "PATCH",
+    "method": "GET",
     "url": "/api/productos/1"
   },
   "response": {
@@ -11,8 +11,8 @@
       "sku": "TOR-M10",
       "descripcion": "Tornillo métrico de 10mm",
       "precioCosto": 0.50,
-      "precioVenta": 1.75,
-      "stockTotal": 150,
+      "precioVenta": 1.25,
+      "stockTotal": 100,
       "activo": true,
       "fechaCreacion": "2025-02-20T10:00:00"
     },

@@ -1,13 +1,13 @@
 {
   "request": {
     "method": "GET",
-    "url": "/api/precios/TORNILLO-M10"
+    "url": "/api/ventas/999"
   },
   "response": {
-    "status": 200,
+    "status": 404,
     "jsonBody": {
-      "sku": "TORNILLO-M10",
-      "precio": 1.25
+      "codigo": 404,
+      "mensaje": "Venta no encontrada con ID: 999"
     },
     "headers": {
       "Content-Type": "application/json"

@@ -1,0 +1,44 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/clientes"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "id": 1,
+        "nombre": "Constructora López S.A.",
+        "email": "ventas@constructoralopez.com",
+        "telefono": "600123456",
+        "direccion": "Calle Mayor 10",
+        "ciudad": "Madrid",
+        "activo": true,
+        "fechaCreacion": "2025-02-12T08:00:00"
+      },
+      {
+        "id": 2,
+        "nombre": "Empresa Construcción S.L.",
+        "email": "compras@empresaconstruccion.com",
+        "telefono": "600234567",
+        "direccion": "Av. Diagonal 200",
+        "ciudad": "Barcelona",
+        "activo": true,
+        "fechaCreacion": "2025-02-12T09:00:00"
+      },
+      {
+        "id": 3,
+        "nombre": "Reformas Martínez",
+        "email": "info@reformasmartinez.com",
+        "telefono": "600345678",
+        "direccion": "Plaza España 5",
+        "ciudad": "Valencia",
+        "activo": true,
+        "fechaCreacion": "2025-02-12T10:00:00"
+      }
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

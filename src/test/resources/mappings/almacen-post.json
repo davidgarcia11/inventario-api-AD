@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/almacenes"
+  },
+  "response": {
+    "status": 201,
+    "jsonBody": {
+      "id": 4,
+      "nombre": "Almacén Este",
+      "ubicacion": "Valencia",
+      "capacidadMaxima": 6000,
+      "stockActual": 0,
+      "responsable": "Laura Martínez",
+      "activo": true,
+      "fechaCreacion": "2025-02-21T09:00:00"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

@@ -1,13 +1,13 @@
 {
   "request": {
-    "method": "GET",
-    "url": "/api/precios/NO-EXISTE"
+    "method": "DELETE",
+    "url": "/api/almacenes/999"
   },
   "response": {
     "status": 404,
     "jsonBody": {
       "codigo": 404,
-      "mensaje": "El recurso externo no fue encontrado"
+      "mensaje": "No se puede eliminar. Almacén no encontrado con ID: 999"
     },
     "headers": {
       "Content-Type": "application/json"

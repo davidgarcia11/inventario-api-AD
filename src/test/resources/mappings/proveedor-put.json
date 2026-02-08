@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/proveedores/1"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 1,
+      "nombre": "Aceros García S.L.",
+      "email": "nuevo.contacto@acerosgarcia.com",
+      "telefono": "912345678",
+      "pais": "Portugal",
+      "diasEntrega": 5,
+      "activo": true,
+      "fechaCreacion": "2025-02-10T08:00:00"
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

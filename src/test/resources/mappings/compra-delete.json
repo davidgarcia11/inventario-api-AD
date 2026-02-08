@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "DELETE",
-    "url": "/api/productos/1"
+    "url": "/api/compras/1"
   },
   "response": {
     "status": 204
