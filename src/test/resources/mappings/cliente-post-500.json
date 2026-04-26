@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/clientes",
+    "bodyPatterns": [
+      { "contains": "SIMULAR-ERROR-500" }
+    ]
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al crear el cliente: Error interno al guardar el cliente"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

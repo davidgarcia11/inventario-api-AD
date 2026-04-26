@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/productos",
+    "bodyPatterns": [
+      { "contains": "Clavo 50mm" }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "jsonBody": {
+      "id": 4,
+      "nombre": "Clavo 50mm",
+      "sku": "CLA-50",
+      "descripcion": "Clavo de acero de 50mm",
+      "precioCosto": 0.05,
+      "precioVenta": 0.15,
+      "stockTotal": 1000,
+      "activo": true,
+      "fechaCreacion": "2025-02-21T09:00:00"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

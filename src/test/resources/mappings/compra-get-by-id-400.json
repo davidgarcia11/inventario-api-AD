@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/compras/0"
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "El ID debe ser válido"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

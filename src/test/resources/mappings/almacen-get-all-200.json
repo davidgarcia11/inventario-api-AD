@@ -1,0 +1,42 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/almacenes"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "id": 1,
+        "nombre": "Almacén Norte",
+        "ubicacion": "Bilbao",
+        "capacidadMaxima": 5000,
+        "stockActual": 1200,
+        "responsable": "Carlos Ruiz",
+        "activo": true,
+        "fechaCreacion": "2025-02-15T08:00:00"
+      },
+      {
+        "id": 2,
+        "nombre": "Almacén Central",
+        "ubicacion": "Madrid",
+        "capacidadMaxima": 10000,
+        "stockActual": 3500,
+        "responsable": "Ana López",
+        "activo": true,
+        "fechaCreacion": "2025-02-15T08:30:00"
+      },
+      {
+        "id": 3,
+        "nombre": "Almacén Sur",
+        "ubicacion": "Sevilla",
+        "capacidadMaxima": 8000,
+        "stockActual": 2000,
+        "responsable": "Pedro García",
+        "activo": true,
+        "fechaCreacion": "2025-02-15T09:00:00"
+      }
+    ],
+    "headers": { "Content-Type": "application/json" }
+  }
+}

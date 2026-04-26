@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/api/productos/1"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 1,
+      "nombre": "Tornillo M10",
+      "sku": "TOR-M10",
+      "descripcion": "Tornillo métrico de 10mm",
+      "precioCosto": 0.50,
+      "precioVenta": 1.75,
+      "stockTotal": 150,
+      "activo": true,
+      "fechaCreacion": "2025-02-20T10:00:00"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

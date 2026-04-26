@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/proveedores",
+    "bodyPatterns": [
+      { "contains": "\"nombre\":\"\"" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "El nombre del proveedor es obligatorio"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

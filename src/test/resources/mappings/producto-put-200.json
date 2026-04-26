@@ -1,0 +1,21 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/productos/1"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 1,
+      "nombre": "Tornillo M10 Inoxidable",
+      "sku": "TOR-M10-INOX",
+      "descripcion": "Tornillo métrico inoxidable de 10mm",
+      "precioCosto": 0.80,
+      "precioVenta": 2.50,
+      "stockTotal": 150,
+      "activo": true,
+      "fechaCreacion": "2025-02-20T10:00:00"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "/api/proveedores/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al eliminar el proveedor: Error interno al eliminar el proveedor"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

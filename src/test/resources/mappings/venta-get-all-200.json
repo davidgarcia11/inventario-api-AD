@@ -1,0 +1,36 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/ventas"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "id": 1,
+        "cliente": { "id": 1, "nombre": "Constructora López S.A." },
+        "producto": { "id": 1, "nombre": "Tornillo M10", "sku": "TOR-M10" },
+        "almacen": { "id": 2, "nombre": "Almacén Central" },
+        "cantidad": 50,
+        "precioUnitario": 1.25,
+        "fechaVenta": "2025-02-21T16:30:00",
+        "numeroPedido": "PED-2025-001",
+        "estado": "ENTREGADA",
+        "fechaCreacion": "2025-02-21T16:30:00"
+      },
+      {
+        "id": 2,
+        "cliente": { "id": 2, "nombre": "Empresa Construcción S.L." },
+        "producto": { "id": 2, "nombre": "Tuerca M10", "sku": "TUE-M10" },
+        "almacen": { "id": 1, "nombre": "Almacén Norte" },
+        "cantidad": 100,
+        "precioUnitario": 0.50,
+        "fechaVenta": "2025-02-21T17:00:00",
+        "numeroPedido": "PED-2025-002",
+        "estado": "PENDIENTE",
+        "fechaCreacion": "2025-02-21T17:00:00"
+      }
+    ],
+    "headers": { "Content-Type": "application/json" }
+  }
+}

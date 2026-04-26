@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/almacenes/2",
+    "bodyPatterns": [
+      { "contains": "\"capacidadMaxima\":-1" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "La capacidad máxima no puede ser negativa"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/compras",
+    "bodyPatterns": [
+      { "contains": "SIMULAR-ERROR-500" }
+    ]
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al crear la compra: Error al procesar la compra en base de datos"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

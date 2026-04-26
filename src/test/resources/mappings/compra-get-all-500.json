@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/compras/error-server"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al filtrar compras: Error al filtrar las compras"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/ventas",
+    "bodyPatterns": [
+      { "contains": "SIMULAR-ERROR-500" }
+    ]
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al crear la venta: Error interno al procesar la venta"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

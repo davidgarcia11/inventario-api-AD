@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/ventas/2",
+    "bodyPatterns": [
+      { "contains": "\"cantidad\":-1" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "La cantidad no puede ser negativa"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

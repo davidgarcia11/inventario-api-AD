@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/productos"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "id": 1,
+        "nombre": "Tornillo M10",
+        "sku": "TOR-M10",
+        "descripcion": "Tornillo métrico de 10mm",
+        "precioCosto": 0.50,
+        "precioVenta": 1.25,
+        "stockTotal": 100,
+        "activo": true,
+        "fechaCreacion": "2025-02-20T10:00:00"
+      },
+      {
+        "id": 2,
+        "nombre": "Tuerca M10",
+        "sku": "TUE-M10",
+        "descripcion": "Tuerca métrica de 10mm",
+        "precioCosto": 0.20,
+        "precioVenta": 0.50,
+        "stockTotal": 500,
+        "activo": true,
+        "fechaCreacion": "2025-02-20T10:05:00"
+      },
+      {
+        "id": 3,
+        "nombre": "Arandela M10",
+        "sku": "ARA-M10",
+        "descripcion": "Arandela plana de 10mm",
+        "precioCosto": 0.10,
+        "precioVenta": 0.30,
+        "stockTotal": 800,
+        "activo": true,
+        "fechaCreacion": "2025-02-20T10:10:00"
+      }
+    ],
+    "headers": { "Content-Type": "application/json" }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/proveedores/error-server"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al filtrar proveedores: Error al recuperar la lista de proveedores"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

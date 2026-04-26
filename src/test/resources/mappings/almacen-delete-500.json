@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "/api/almacenes/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al eliminar el almacén: Error interno al eliminar el almacén"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

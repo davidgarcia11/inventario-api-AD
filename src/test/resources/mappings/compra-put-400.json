@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/compras/2",
+    "bodyPatterns": [
+      { "contains": "\"precioUnitario\":-1" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "El precio unitario no puede ser negativo"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

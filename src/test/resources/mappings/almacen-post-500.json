@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/almacenes",
+    "bodyPatterns": [
+      { "contains": "SIMULAR-ERROR-500" }
+    ]
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al crear el almacén: Error interno al guardar en base de datos"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

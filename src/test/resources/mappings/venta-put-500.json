@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/ventas/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al actualizar la venta: Error interno al actualizar la venta"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

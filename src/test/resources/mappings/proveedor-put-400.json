@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/proveedores/2",
+    "bodyPatterns": [
+      { "contains": "\"diasEntrega\":-1" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "Los días de entrega no pueden ser negativos"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

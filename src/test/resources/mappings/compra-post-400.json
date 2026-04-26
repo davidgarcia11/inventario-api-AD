@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/compras",
+    "bodyPatterns": [
+      { "contains": "\"cantidad\":-1" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "La cantidad de la compra debe ser mayor a 0"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

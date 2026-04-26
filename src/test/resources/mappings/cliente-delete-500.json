@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "/api/clientes/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al eliminar el cliente: Error interno al eliminar el cliente"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

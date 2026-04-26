@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/productos/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al actualizar el producto: Error interno al actualizar el producto"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

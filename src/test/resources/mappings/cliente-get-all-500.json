@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/clientes/error-server"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al filtrar clientes: Error al recuperar la lista de clientes"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

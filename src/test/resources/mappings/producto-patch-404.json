@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PATCH",
+    "url": "/api/productos/999"
+  },
+  "response": {
+    "status": 404,
+    "jsonBody": {
+      "codigo": 404,
+      "mensaje": "Producto no encontrado"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

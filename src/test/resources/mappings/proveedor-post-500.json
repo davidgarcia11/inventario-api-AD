@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/proveedores",
+    "bodyPatterns": [
+      { "contains": "SIMULAR-ERROR-500" }
+    ]
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al crear el proveedor: Error interno al guardar el proveedor"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

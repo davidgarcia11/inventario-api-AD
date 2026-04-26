@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/almacenes/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al actualizar el almacén: Error interno al actualizar el almacén"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

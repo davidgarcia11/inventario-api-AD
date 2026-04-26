@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/productos",
+    "bodyPatterns": [
+      { "contains": "\"nombre\":\"\"" }
+    ]
+  },
+  "response": {
+    "status": 400,
+    "jsonBody": {
+      "codigo": 400,
+      "mensaje": "El nombre del producto es obligatorio"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

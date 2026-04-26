@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "/api/productos/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al eliminar el producto: Error interno al eliminar el producto"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

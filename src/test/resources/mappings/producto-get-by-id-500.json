@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/api/productos/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al buscar el producto: Error de conexión con la base de datos"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

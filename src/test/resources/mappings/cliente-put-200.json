@@ -1,0 +1,20 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/clientes/1"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 1,
+      "nombre": "Constructora López Actualizada S.A.",
+      "email": "nuevo@constructoralopez.com",
+      "telefono": "600123456",
+      "direccion": "Calle Mayor 10",
+      "ciudad": "Valencia",
+      "activo": true,
+      "fechaCreacion": "2025-02-12T08:00:00"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

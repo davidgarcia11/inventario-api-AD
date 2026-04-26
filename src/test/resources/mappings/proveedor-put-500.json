@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/proveedores/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al actualizar el proveedor: Error interno al actualizar el proveedor"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

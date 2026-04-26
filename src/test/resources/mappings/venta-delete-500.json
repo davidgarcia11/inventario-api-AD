@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "/api/ventas/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al eliminar la venta: Error interno al eliminar la venta"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

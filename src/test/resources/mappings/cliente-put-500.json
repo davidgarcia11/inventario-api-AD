@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/clientes/500"
+  },
+  "response": {
+    "status": 500,
+    "jsonBody": {
+      "codigo": 500,
+      "mensaje": "Error al actualizar el cliente: Error interno al actualizar el cliente"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

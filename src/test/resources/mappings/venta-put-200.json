@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "PUT",
+    "url": "/api/ventas/1"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": {
+      "id": 1,
+      "cliente": { "id": 1, "nombre": "Constructora López S.A." },
+      "producto": { "id": 1, "nombre": "Tornillo M10", "sku": "TOR-M10" },
+      "almacen": { "id": 2, "nombre": "Almacén Central" },
+      "cantidad": 60,
+      "precioUnitario": 1.20,
+      "fechaVenta": "2025-02-21T16:30:00",
+      "numeroPedido": "PED-2025-001-MOD",
+      "estado": "FACTURADA",
+      "fechaCreacion": "2025-02-21T16:30:00"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}

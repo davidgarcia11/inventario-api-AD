@@ -1,0 +1,25 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/compras",
+    "bodyPatterns": [
+      { "contains": "FAC-2025-003" }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "jsonBody": {
+      "id": 3,
+      "proveedor": { "id": 1, "nombre": "Aceros García" },
+      "producto": { "id": 3, "nombre": "Arandela M10", "sku": "ARA-M10" },
+      "almacen": { "id": 3, "nombre": "Almacén Sur" },
+      "cantidad": 200,
+      "precioUnitario": 0.10,
+      "fechaCompra": "2025-02-21T09:00:00",
+      "numeroFactura": "FAC-2025-003",
+      "estado": "PENDIENTE",
+      "fechaCreacion": "2025-02-21T09:00:00"
+    },
+    "headers": { "Content-Type": "application/json" }
+  }
+}
