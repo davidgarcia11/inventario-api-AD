@@ -1,0 +1,3039 @@
+{
+  "info": {
+    "_postman_id": "8c43ee06-4526-4776-b0de-f21f54ba03f9",
+    "name": "WireMock - Inventario API COMPLETA (Todos los codigos)",
+    "description": "Coleccion completa con TODOS los endpoints y codigos de respuesta (200, 201, 204, 400, 404, 500). Replica el Swagger contra WireMock en puerto 8081.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "41736821"
+  },
+  "item": [
+    {
+      "name": "PRODUCTOS",
+      "item": [
+        {
+          "name": "GET ALL - Listar productos (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/error-server",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "error-server"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Encontrado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - ID invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - No encontrado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Crear producto (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Clavo 50mm\",\n  \"sku\": \"CLA-50\",\n  \"descripcion\": \"Clavo de acero de 50mm\",\n  \"precioCosto\": 0.05,\n  \"precioVenta\": 0.15,\n  \"stockTotal\": 1000\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\":\"\",\n  \"sku\": \"CLA-50\",\n  \"precioVenta\": 0.15,\n  \"stockTotal\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Error servidor (500)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"SIMULAR-ERROR-500\",\n  \"sku\": \"ERR\",\n  \"precioVenta\": 1.00,\n  \"stockTotal\": 10\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar completo (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Tornillo M10 Inoxidable\",\n  \"sku\": \"TOR-M10-INOX\",\n  \"precioCosto\": 0.80,\n  \"precioVenta\": 2.50,\n  \"stockTotal\": 150\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Datos invalidos (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto\",\n  \"precioVenta\":-1,\n  \"stockTotal\": 100\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - No encontrado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"No existe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Error servidor (500)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Error\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Actualizar parcial (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precioVenta\": 1.75,\n  \"stockTotal\": 150\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - No encontrado (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precioVenta\": 5.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Error servidor (500)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precioVenta\": 5.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/productos/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - No encontrado (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Error servidor (500)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/productos/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "productos",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ALMACENES",
+      "item": [
+        {
+          "name": "GET ALL - Listar almacenes (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/error-server",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "error-server"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Encontrado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - ID invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - No encontrado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Crear almacen (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Este\",\n  \"ubicacion\": \"Valencia\",\n  \"capacidadMaxima\": 6000,\n  \"stockActual\": 0,\n  \"responsable\": \"Laura Martínez\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\":\"\",\n  \"ubicacion\": \"Madrid\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Error servidor (500)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"SIMULAR-ERROR-500\",\n  \"ubicacion\": \"Error\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar completo (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Norte Renovado\",\n  \"ubicacion\": \"Bilbao Centro\",\n  \"capacidadMaxima\": 7000,\n  \"stockActual\": 1200,\n  \"responsable\": \"Carlos Ruiz\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Datos invalidos (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Test\",\n  \"capacidadMaxima\":-1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - No encontrado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"No existe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Error servidor (500)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Error\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Actualizar parcial (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ubicacion\": \"Nueva Ubicación\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - No encontrado (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ubicacion\": \"Test\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Error servidor (500)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ubicacion\": \"Test\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - No encontrado (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Error servidor (500)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/almacenes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "almacenes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "PROVEEDORES",
+      "item": [
+        {
+          "name": "GET ALL - Listar proveedores (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/error-server",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "error-server"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Encontrado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - ID invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - No encontrado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Crear proveedor (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Metales Industriales S.A.\",\n  \"email\": \"info@metalesindustriales.com\",\n  \"telefono\": \"915678901\",\n  \"pais\": \"España\",\n  \"diasEntrega\": 4\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\":\"\",\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Error servidor (500)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"SIMULAR-ERROR-500\",\n  \"email\": \"err@err.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar completo (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Aceros García S.L.\",\n  \"email\": \"nuevo.contacto@acerosgarcia.com\",\n  \"telefono\": \"912345678\",\n  \"pais\": \"Portugal\",\n  \"diasEntrega\": 5\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Datos invalidos (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Test\",\n  \"diasEntrega\":-1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - No encontrado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"No existe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Error servidor (500)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Error\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Actualizar parcial (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"email.urgente@acerosgarcia.com\",\n  \"diasEntrega\": 2\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - No encontrado (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Error servidor (500)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - No encontrado (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Error servidor (500)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/proveedores/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "proveedores",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CLIENTES",
+      "item": [
+        {
+          "name": "GET ALL - Listar clientes (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/error-server",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "error-server"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Encontrado (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - ID invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - No encontrado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Crear cliente (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Instalaciones Rápidas S.L.\",\n  \"email\": \"contacto@instalacionesrapidas.com\",\n  \"telefono\": \"600456789\",\n  \"direccion\": \"Calle Nueva 25\",\n  \"ciudad\": \"Sevilla\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\":\"\",\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Error servidor (500)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"SIMULAR-ERROR-500\",\n  \"email\": \"err@err.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar completo (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Constructora López Actualizada S.A.\",\n  \"email\": \"nuevo@constructoralopez.com\",\n  \"telefono\": \"600123456\",\n  \"direccion\": \"Calle Mayor 10\",\n  \"ciudad\": \"Valencia\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Datos invalidos (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\":\"\",\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - No encontrado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"No existe\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Error servidor (500)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Error\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Actualizar parcial (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo.email@constructoralopez.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - No encontrado (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Error servidor (500)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@test.com\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - No encontrado (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Error servidor (500)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/clientes/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "clientes",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "COMPRAS",
+      "item": [
+        {
+          "name": "GET ALL - Listar compras (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/error-server",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "error-server"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Encontrada (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - ID invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - No encontrada (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Registrar compra (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": { \"id\": 1 },\n  \"producto\": { \"id\": 3 },\n  \"almacen\": { \"id\": 3 },\n  \"cantidad\": 200,\n  \"precioUnitario\": 0.10,\n  \"fechaCompra\": \"2025-02-21T09:00:00\",\n  \"numeroFactura\": \"FAC-2025-003\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": { \"id\": 1 },\n  \"producto\": { \"id\": 1 },\n  \"almacen\": { \"id\": 1 },\n  \"cantidad\":-1,\n  \"precioUnitario\": 0.50\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Error servidor (500)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": { \"id\": 1 },\n  \"producto\": { \"id\": 1 },\n  \"almacen\": { \"id\": 1 },\n  \"cantidad\": 1,\n  \"precioUnitario\": 1.00,\n  \"fechaCompra\": \"2025-02-21T09:00:00\",\n  \"numeroFactura\": \"SIMULAR-ERROR-500\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar completa (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"proveedor\": { \"id\": 1 },\n  \"producto\": { \"id\": 1 },\n  \"almacen\": { \"id\": 2 },\n  \"cantidad\": 150,\n  \"precioUnitario\": 0.45,\n  \"numeroFactura\": \"FAC-2025-001-MOD\",\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Datos invalidos (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cantidad\": 100,\n  \"precioUnitario\":-1\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - No encontrada (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"RECIBIDA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Error servidor (500)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"RECIBIDA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Cambiar estado (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - No encontrada (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Error servidor (500)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"PAGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/compras/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - No encontrada (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Error servidor (500)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/compras/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "compras",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "VENTAS",
+      "item": [
+        {
+          "name": "GET ALL - Listar ventas (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET ALL - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/error-server",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "error-server"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Encontrada (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - ID invalido (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/0",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "0"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - No encontrada (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET BY ID - Error servidor (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Registrar venta (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": { \"id\": 3 },\n  \"producto\": { \"id\": 3 },\n  \"almacen\": { \"id\": 3 },\n  \"cantidad\": 200,\n  \"precioUnitario\": 0.30,\n  \"fechaVenta\": \"2025-02-21T18:00:00\",\n  \"numeroPedido\": \"PED-2025-003\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Datos invalidos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": { \"id\": 1 },\n  \"producto\": { \"id\": 1 },\n  \"almacen\": { \"id\": 1 },\n  \"cantidad\":-1,\n  \"precioUnitario\": 1.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Error servidor (500)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": { \"id\": 1 },\n  \"producto\": { \"id\": 1 },\n  \"almacen\": { \"id\": 1 },\n  \"cantidad\": 1,\n  \"precioUnitario\": 1.00,\n  \"fechaVenta\": \"2025-02-21T18:00:00\",\n  \"numeroPedido\": \"SIMULAR-ERROR-500\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Actualizar completa (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": { \"id\": 1 },\n  \"producto\": { \"id\": 1 },\n  \"almacen\": { \"id\": 2 },\n  \"cantidad\": 60,\n  \"precioUnitario\": 1.20,\n  \"numeroPedido\": \"PED-2025-001-MOD\",\n  \"estado\": \"FACTURADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Datos invalidos (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cantidad\":-1,\n  \"precioUnitario\": 1.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - No encontrada (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ENTREGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Error servidor (500)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"ENTREGADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Cambiar estado (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"FACTURADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - No encontrada (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"FACTURADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH - Error servidor (500)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estado\": \"FACTURADA\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - No encontrada (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/999",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Error servidor (500)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/ventas/500",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "ventas",
+                "500"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "API EXTERNA (Simulacion)",
+      "item": [
+        {
+          "name": "GET - Consultar Impuestos (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/impuestos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "impuestos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Precio producto (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/precios/TORNILLO-M10",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "precios",
+                "TORNILLO-M10"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Recurso no existe (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/precios/NO-EXISTE",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "precios",
+                "NO-EXISTE"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Error servidor externo (500)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8081/api/precios/ERROR-SERVER",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8081",
+              "path": [
+                "api",
+                "precios",
+                "ERROR-SERVER"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

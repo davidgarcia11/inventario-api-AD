@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "cfa390e2-9602-4192-9ea6-f77dab6b17ae",
-    "name": "Inventario API - COMPLETA (con PATCH) Copy",
-    "description": "Colección completa con 42 endpoints: CRUD + PATCH para las 6 entidades",
+    "_postman_id": "03140f5a-c5f1-4d56-a4e4-1bb26006d081",
+    "name": "Inventario API - COMPLETA (Con Filtros Combinados)",
+    "description": "Colección completa con 42 endpoints originales + Nuevos endpoints de Filtros Combinados (3 campos).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "41736821"
   },
@@ -134,6 +134,46 @@
               ]
             },
             "description": "Filtra productos con precio >= valor especificado"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar con Filtros Combinados (GET) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/productos?nombre=Tornillo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Tornillo",
+                  "description": "Filtro 1"
+                },
+                {
+                  "key": "sku",
+                  "value": "TORNILLO-M10",
+                  "description": "Filtro 2",
+                  "disabled": true
+                },
+                {
+                  "key": "precioVenta",
+                  "value": "1.25",
+                  "description": "Filtro 3",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Filtra por nombre, sku y precioVenta simultáneamente."
           },
           "response": []
         },
@@ -277,6 +317,26 @@
           "response": []
         },
         {
+          "name": "3. Listar Almacenes (GET)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/almacenes",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "almacenes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "4. Filtrar por Ubicación (GET)",
           "request": {
             "method": "GET",
@@ -329,12 +389,12 @@
           "response": []
         },
         {
-          "name": "3. Listar Almacenes (GET)",
+          "name": "Listar con Filtros Combinados (GET) ⭐",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes",
+              "raw": "http://localhost:8080/api/almacenes?nombre=Central",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -343,8 +403,28 @@
               "path": [
                 "api",
                 "almacenes"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Central",
+                  "description": "Filtro 1"
+                },
+                {
+                  "key": "ubicacion",
+                  "value": "Barcelona",
+                  "description": "Filtro 2",
+                  "disabled": true
+                },
+                {
+                  "key": "capacidadMaxima",
+                  "value": "5000",
+                  "description": "Filtro 3",
+                  "disabled": true
+                }
               ]
-            }
+            },
+            "description": "Filtra por nombre, ubicación y capacidad máxima simultáneamente."
           },
           "response": []
         },
@@ -557,6 +637,46 @@
           "response": []
         },
         {
+          "name": "Listar con Filtros Combinados (GET) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/proveedores?nombre=Aceros",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "proveedores"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Aceros",
+                  "description": "Filtro 1"
+                },
+                {
+                  "key": "email",
+                  "value": "contacto@aceros.com",
+                  "description": "Filtro 2",
+                  "disabled": true
+                },
+                {
+                  "key": "diasEntrega",
+                  "value": "3",
+                  "description": "Filtro 3",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Filtra por nombre, email y diasEntrega simultáneamente."
+          },
+          "response": []
+        },
+        {
           "name": "6. Actualizar Completo (PUT)",
           "request": {
             "method": "PUT",
@@ -761,6 +881,46 @@
                 }
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar con Filtros Combinados (GET) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/clientes?nombre=Constructora",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "clientes"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Constructora",
+                  "description": "Filtro 1"
+                },
+                {
+                  "key": "email",
+                  "value": "ventas@",
+                  "description": "Filtro 2",
+                  "disabled": true
+                },
+                {
+                  "key": "ciudad",
+                  "value": "Barcelona",
+                  "description": "Filtro 3",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Filtra por nombre, email y ciudad simultáneamente."
           },
           "response": []
         },
@@ -974,6 +1134,46 @@
           "response": []
         },
         {
+          "name": "Listar con Filtros Combinados (GET) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/compras?estado=RECIBIDA",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "compras"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "RECIBIDA",
+                  "description": "Filtro 1"
+                },
+                {
+                  "key": "cantidad",
+                  "value": "100",
+                  "description": "Filtro 2",
+                  "disabled": true
+                },
+                {
+                  "key": "numeroFactura",
+                  "value": "FAC-2025-001",
+                  "description": "Filtro 3",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Filtra por estado, cantidad y numeroFactura simultáneamente."
+          },
+          "response": []
+        },
+        {
           "name": "6. Actualizar Completo (PUT)",
           "request": {
             "method": "PUT",
@@ -1180,6 +1380,46 @@
                 }
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar con Filtros Combinados (GET) ⭐",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/ventas?estado=ENTREGADA",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ventas"
+              ],
+              "query": [
+                {
+                  "key": "estado",
+                  "value": "ENTREGADA",
+                  "description": "Filtro 1"
+                },
+                {
+                  "key": "cantidad",
+                  "value": "50",
+                  "description": "Filtro 2",
+                  "disabled": true
+                },
+                {
+                  "key": "numeroPedido",
+                  "value": "PED-2025-0001",
+                  "description": "Filtro 3",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Filtra por estado, cantidad y numeroPedido simultáneamente."
           },
           "response": []
         },
