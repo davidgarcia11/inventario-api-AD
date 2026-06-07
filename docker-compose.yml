@@ -1,0 +1,64 @@
+# ========================================================================
+# Stack completo: API + MariaDB
+# ========================================================================
+# Para arrancar:
+#   1. cp .env.example .env       (y ajusta las credenciales)
+#   2. docker compose up --build  (la primera vez compila la imagen)
+#
+# La API quedará en http://localhost:8080 y MariaDB en localhost:3307
+# (3307 para no chocar con la MariaDB local del host en 3306).
+# ========================================================================
+
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: inventario-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - inventario-net
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: inventario-api
+    restart: unless-stopped
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:mariadb://mariadb:3306/${DB_NAME}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    networks:
+      - inventario-net
+
+volumes:
+  mariadb-data:
+
+networks:
+  inventario-net:
+    driver: bridge
+    # Fijamos el nombre para poder referenciar esta red desde otros
+    # compose files (como docker-compose.apiman.yml) sin tener que
+    # incluir el prefijo automático del proyecto.
+    name: inventario-net

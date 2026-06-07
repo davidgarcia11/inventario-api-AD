@@ -8,6 +8,107 @@
   },
   "item": [
     {
+      "name": "0. Autenticación",
+      "description": "Endpoints para registrar usuarios y obtener un token JWT. El pre-request script de la colección se encarga de pedir el token automáticamente al resto de requests.",
+      "item": [
+        {
+          "name": "1. Registrar usuario (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Crea un usuario nuevo. Solo hace falta correrlo una vez por entorno; si el usuario ya existe devolverá 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{authUsername}}\",\n  \"password\": \"{{authPassword}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Si el login va bien, guardamos el token y su expiración para que",
+                  "// las siguientes requests lo usen automáticamente.",
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', json.token);",
+                  "    pm.collectionVariables.set('authTokenExpiresAt', String(Date.now() + json.expiresIn * 1000));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Login (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Autentica al usuario y guarda el token JWT en una variable de la colección.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{authUsername}}\",\n  \"password\": \"{{authPassword}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Si el login va bien, guardamos el token y su expiración para que",
+                  "// las siguientes requests lo usen automáticamente.",
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('authToken', json.token);",
+                  "    pm.collectionVariables.set('authTokenExpiresAt', String(Date.now() + json.expiresIn * 1000));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "noauth"
+      }
+    },
+    {
       "name": "Productos",
       "item": [
         {
@@ -25,12 +126,10 @@
               "raw": "{\n  \"nombre\": \"Tornillo M10\",\n  \"sku\": \"TORNILLO-M10\",\n  \"precioCosto\": 0.50,\n  \"precioVenta\": 1.25,\n  \"stockTotal\": 100\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/productos",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos"
@@ -46,12 +145,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/productos/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos",
@@ -68,12 +165,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/productos",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos"
@@ -89,12 +184,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/productos?nombre=Tornillo",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos?nombre=Tornillo",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos"
@@ -116,12 +209,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/productos?precioVenta=1.0",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos?precioVenta=1.0",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos"
@@ -143,12 +234,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/productos?nombre=Tornillo",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos?nombre=Tornillo",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos"
@@ -192,12 +281,10 @@
               "raw": "{\n  \"nombre\": \"Tornillo M12\",\n  \"sku\": \"TORNILLO-M12\",\n  \"precioVenta\": 1.50,\n  \"stockTotal\": 150\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/productos/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos",
@@ -223,12 +310,10 @@
               "raw": "{\n  \"precioVenta\": 1.75\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/productos/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos",
@@ -245,12 +330,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/productos/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/productos/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "productos",
@@ -281,12 +364,10 @@
               "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Barcelona\",\n  \"capacidadMaxima\": 10000,\n  \"stockActual\": 5000\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/almacenes",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes"
@@ -301,12 +382,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes",
@@ -322,12 +401,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes"
@@ -342,12 +419,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes?ubicacion=Barcelona",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes?ubicacion=Barcelona",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes"
@@ -368,12 +443,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes?capacidadMaxima=8000",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes?capacidadMaxima=8000",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes"
@@ -394,12 +467,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes?nombre=Central",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes?nombre=Central",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes"
@@ -443,12 +514,10 @@
               "raw": "{\n  \"nombre\": \"Almacén Madrid\",\n  \"ubicacion\": \"Madrid\",\n  \"capacidadMaxima\": 12000\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/almacenes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes",
@@ -473,12 +542,10 @@
               "raw": "{\n  \"stockActual\": 6000\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/almacenes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes",
@@ -494,12 +561,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/almacenes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/almacenes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "almacenes",
@@ -529,12 +594,10 @@
               "raw": "{\n  \"nombre\": \"Aceros García\",\n  \"email\": \"contacto@acerosgarcia.com\",\n  \"telefono\": \"912345678\",\n  \"diasEntrega\": 3\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/proveedores",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores"
@@ -549,12 +612,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/proveedores/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores",
@@ -570,12 +631,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/proveedores",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores"
@@ -590,12 +649,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/proveedores?nombre=Aceros",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores?nombre=Aceros",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores"
@@ -616,12 +673,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/proveedores?diasEntrega=5",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores?diasEntrega=5",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores"
@@ -642,12 +697,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/proveedores?nombre=Aceros",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores?nombre=Aceros",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores"
@@ -691,12 +744,10 @@
               "raw": "{\n  \"nombre\": \"Aceros López\",\n  \"email\": \"contacto@aceroslopez.com\",\n  \"diasEntrega\": 5\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/proveedores/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores",
@@ -721,12 +772,10 @@
               "raw": "{\n  \"diasEntrega\": 2\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/proveedores/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores",
@@ -742,12 +791,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/proveedores/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/proveedores/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "proveedores",
@@ -777,12 +824,10 @@
               "raw": "{\n  \"nombre\": \"Constructora López\",\n  \"email\": \"ventas@constructoralopez.com\",\n  \"telefono\": \"913456789\",\n  \"ciudad\": \"Barcelona\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/clientes",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes"
@@ -797,12 +842,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/clientes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes",
@@ -818,12 +861,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/clientes",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes"
@@ -838,12 +879,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/clientes?ciudad=Barcelona",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes?ciudad=Barcelona",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes"
@@ -864,12 +903,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/clientes?email=constructora",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes?email=constructora",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes"
@@ -890,12 +927,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/clientes?nombre=Constructora",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes?nombre=Constructora",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes"
@@ -939,12 +974,10 @@
               "raw": "{\n  \"nombre\": \"Constructora García\",\n  \"email\": \"ventas@constructoragarcia.com\",\n  \"ciudad\": \"Madrid\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/clientes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes",
@@ -969,12 +1002,10 @@
               "raw": "{\n  \"telefono\": \"914567890\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/clientes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes",
@@ -990,12 +1021,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/clientes/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/clientes/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "clientes",
@@ -1025,12 +1054,10 @@
               "raw": "{\n  \"proveedor\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 100,\n  \"precioUnitario\": 0.50,\n  \"fechaCompra\": \"2025-01-21T10:30:00\",\n  \"numeroFactura\": \"FAC-2025-001\",\n  \"estado\": \"RECIBIDA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/compras",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras"
@@ -1046,12 +1073,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/compras/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras",
@@ -1067,12 +1092,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/compras",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras"
@@ -1087,12 +1110,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/compras?estado=RECIBIDA",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras?estado=RECIBIDA",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras"
@@ -1113,12 +1134,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/compras?cantidad=50",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras?cantidad=50",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras"
@@ -1139,12 +1158,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/compras?estado=RECIBIDA",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras?estado=RECIBIDA",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras"
@@ -1188,12 +1205,10 @@
               "raw": "{\n  \"proveedor\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 150,\n  \"precioUnitario\": 0.55,\n  \"fechaCompra\": \"2025-01-21T11:00:00\",\n  \"numeroFactura\": \"FAC-2025-001\",\n  \"estado\": \"PAGADA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/compras/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras",
@@ -1218,12 +1233,10 @@
               "raw": "{\n  \"estado\": \"PAGADA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/compras/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras",
@@ -1239,12 +1252,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/compras/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/compras/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "compras",
@@ -1275,12 +1286,10 @@
               "raw": "{\n  \"cliente\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 50,\n  \"precioUnitario\": 1.50,\n  \"fechaVenta\": \"2025-01-21T10:30:00\",\n  \"numeroPedido\": \"PED-2025-0001\",\n  \"estado\": \"ENTREGADA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/ventas",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas"
@@ -1296,12 +1305,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/ventas/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas",
@@ -1317,12 +1324,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/ventas",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas"
@@ -1337,12 +1342,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/ventas?estado=ENTREGADA",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas?estado=ENTREGADA",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas"
@@ -1363,12 +1366,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/ventas?cantidad=20",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas?cantidad=20",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas"
@@ -1389,12 +1390,10 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/ventas?estado=ENTREGADA",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas?estado=ENTREGADA",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas"
@@ -1438,12 +1437,10 @@
               "raw": "{\n  \"cliente\": {\"id\": 1},\n  \"producto\": {\"id\": 1},\n  \"almacen\": {\"id\": 1},\n  \"cantidad\": 75,\n  \"precioUnitario\": 1.75,\n  \"fechaVenta\": \"2025-01-21T11:00:00\",\n  \"numeroPedido\": \"PED-2025-0001\",\n  \"estado\": \"FACTURADA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/ventas/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas",
@@ -1468,12 +1465,10 @@
               "raw": "{\n  \"estado\": \"FACTURADA\"\n}"
             },
             "url": {
-              "raw": "http://localhost:8080/api/ventas/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas",
@@ -1489,12 +1484,10 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8080/api/ventas/1",
-              "protocol": "http",
+              "raw": "{{baseUrl}}/api/ventas/1",
               "host": [
-                "localhost"
+                "{{baseUrl}}"
               ],
-              "port": "8080",
               "path": [
                 "api",
                 "ventas",
@@ -1506,6 +1499,222 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "V2 - Endpoints versionados",
+      "description": "Endpoints versionados de la 2ª evaluación. Cada uno mantiene su equivalente en la V1 sin tocar y añade una variante en /api/v2/... con cambios documentados en el campo description de cada request.",
+      "item": [
+        {
+          "name": "1. GET productos paginado (V2)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/productos?page=0&size=5&sort=id,desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                },
+                {
+                  "key": "sort",
+                  "value": "id,desc"
+                }
+              ]
+            },
+            "description": "V2 del GET de productos. Devuelve una respuesta PAGINADA con metadatos (totalElements, totalPages, page, size...). Acepta los parámetros page, size y sort. La V1 (GET /api/productos) devuelve toda la lista de una vez, lo cual no escala."
+          },
+          "response": []
+        },
+        {
+          "name": "2. POST cliente con DTO + Location (V2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "clientes"
+              ]
+            },
+            "description": "V2 del POST de clientes. Recibe un DTO ClienteCreateRequest (no la entidad), email obligatorio con validación @Email, y devuelve 201 + header Location con la URL del recurso creado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Constructora López\",\n  \"email\": \"ventas@constructoralopez.com\",\n  \"telefono\": \"913456789\",\n  \"direccion\": \"Av Industria 22\",\n  \"ciudad\": \"Madrid\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. PUT almacén con DTO restringido (V2)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "1"
+              ]
+            },
+            "description": "V2 del PUT de almacenes. Recibe un DTO restringido que solo permite cambiar nombre, ubicación y stockActual. La capacidad máxima ya NO se modifica desde aquí (es una propiedad física del almacén).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 50\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. DELETE proveedor con ?hard=true (V2)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/proveedores/1?hard=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "proveedores",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "hard",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "V2 del DELETE de proveedores. Sin parámetros hace soft delete (igual que la V1, marca activo=false). Con ?hard=true borra el registro físicamente de la BD. Útil para GDPR o limpieza."
+          },
+          "response": []
+        }
+      ]
     }
-  ]
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "authUsername",
+      "value": "david",
+      "type": "string"
+    },
+    {
+      "key": "authPassword",
+      "value": "secreto123",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "authTokenExpiresAt",
+      "value": "0",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script de la colección. Se ejecuta antes de CADA request.",
+          "// Si no hay token JWT o está a punto de caducar, hace login automático",
+          "// con las variables authUsername / authPassword y guarda el nuevo token",
+          "// en authToken para que el resto de requests lo usen.",
+          "",
+          "const skip = ['Registrar', 'Login'];",
+          "if (skip.some(n => pm.info.requestName && pm.info.requestName.includes(n))) {",
+          "    return;",
+          "}",
+          "",
+          "const ahora = Date.now();",
+          "const expiraEn = Number(pm.collectionVariables.get('authTokenExpiresAt')) || 0;",
+          "const token = pm.collectionVariables.get('authToken');",
+          "",
+          "// Margen de 60 segundos para no usar un token que está a punto de expirar",
+          "if (token && expiraEn > ahora + 60 * 1000) {",
+          "    return;",
+          "}",
+          "",
+          "// Si no hay token válido, pedimos uno nuevo con /api/auth/login",
+          "const baseUrl = pm.collectionVariables.get('baseUrl');",
+          "pm.sendRequest({",
+          "    url: baseUrl + '/api/auth/login',",
+          "    method: 'POST',",
+          "    header: { 'Content-Type': 'application/json' },",
+          "    body: {",
+          "        mode: 'raw',",
+          "        raw: JSON.stringify({",
+          "            username: pm.collectionVariables.get('authUsername'),",
+          "            password: pm.collectionVariables.get('authPassword')",
+          "        })",
+          "    }",
+          "}, (err, res) => {",
+          "    if (err || res.code !== 200) {",
+          "        console.error('Fallo al renovar el token JWT:', err || res.text());",
+          "        return;",
+          "    }",
+          "    const json = res.json();",
+          "    pm.collectionVariables.set('authToken', json.token);",
+          "    // expiresIn está en segundos, lo guardamos como timestamp absoluto en ms",
+          "    pm.collectionVariables.set('authTokenExpiresAt', String(Date.now() + json.expiresIn * 1000));",
+          "    console.log('Token JWT renovado automáticamente');",
+          "});"
+        ]
+      }
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  }
 }
