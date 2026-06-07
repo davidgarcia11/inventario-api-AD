@@ -1,0 +1,109 @@
+name: Integration tests (Newman + MariaDB)
+
+# Cuándo se ejecuta este workflow:
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  integration:
+    name: Tests de integración con Newman
+    runs-on: ubuntu-latest
+
+    # Servicio MariaDB que arranca como contenedor sidecar.
+    # GitHub Actions espera a que pase el healthcheck antes de
+    # ejecutar los steps.
+    services:
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: inventario_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+          --health-start-period=30s
+
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Java 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Instalar Node 20 (necesario para Newman)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar Newman
+        run: npm install -g newman
+
+      - name: Construir el JAR (saltamos los tests unitarios, ya se ejecutan en otro job)
+        run: ./gradlew bootJar -x test
+
+      - name: Arrancar la API en segundo plano (perfil dev)
+        run: |
+          nohup java -jar build/libs/inventario-api-AD-*.jar \
+            > app.log 2>&1 &
+          echo $! > app.pid
+          echo "API arrancando con PID $(cat app.pid)"
+
+      - name: Esperar a que la API responda en /api/auth/login
+        run: |
+          for i in $(seq 1 30); do
+            if curl -s -o /dev/null \
+                 -X POST http://localhost:8080/api/auth/login \
+                 -H "Content-Type: application/json" \
+                 -d '{"username":"x","password":"x"}'; then
+              echo "API arriba tras ${i} intentos"
+              exit 0
+            fi
+            echo "Esperando a la API... (intento $i)"
+            sleep 3
+          done
+          echo "La API no respondió en 90 segundos"
+          cat app.log
+          exit 1
+
+      - name: Ejecutar Newman contra la API
+        run: |
+          newman run "Inventario API - Integration Tests.postman_collection.json" \
+            --reporters cli,junit \
+            --reporter-junit-export newman-report.xml
+
+      - name: Subir el log de la API si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-log
+          path: app.log
+
+      - name: Subir el informe JUnit de Newman (siempre)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-report
+          path: newman-report.xml
+
+      - name: Parar la API
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) 2>/dev/null || true
+          fi
