@@ -1,16 +1,31 @@
 name: Integration tests (Newman + MariaDB)
 
 # Cuándo se ejecuta este workflow:
+#   - En push a las ramas "long-lived" (main y develop) para validar
+#     el código que ya está integrado.
+#   - En cualquier pull_request hacia main/develop, sin importar
+#     desde qué rama venga. Esto cubre todas las feature/**.
+#
+# Importante: no incluimos feature/** en el trigger push, porque si lo
+# hiciéramos cada push a una feature dispararía DOS runs (uno por push
+# y otro por pull_request) en cuanto hubiera PR abierto. Así nos
+# aseguramos un único run por evento útil.
 on:
   push:
     branches:
       - main
       - develop
-      - 'feature/**'
   pull_request:
     branches:
       - main
       - develop
+
+# Si llegan varios commits seguidos a la misma rama (o al mismo PR),
+# cancelamos el run anterior antes de empezar el nuevo. Ahorra minutos
+# de CI cuando estás iterando rápido.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   integration:
