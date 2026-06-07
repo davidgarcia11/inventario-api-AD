@@ -1,0 +1,33 @@
+# ========================================================================
+# Entorno de DESARROLLO — solo la BD en Docker
+# ========================================================================
+# Pensado para quien quiere arrancar la API en local con `./gradlew bootRun`
+# (perfil dev) pero sin tener MariaDB instalada en el host.
+#
+# Para arrancar:
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# Expone MariaDB en localhost:3306 para que el perfil `dev` la encuentre
+# tal cual (no hay que tocar application-dev.properties).
+# ========================================================================
+
+services:
+  mariadb-dev:
+    image: mariadb:11
+    container_name: inventario-mariadb-dev
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: inventario_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-dev-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mariadb-dev-data:
