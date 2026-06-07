@@ -1,0 +1,7 @@
+# El .env contiene secretos de Keycloak y claves RSA generadas por
+# setup.java. NUNCA debe ir a git. El alumno/evaluador parte siempre
+# de .env.example y regenera con `docker compose -f docker-compose.setup.yml up`.
+.env
+
+# Claves generadas por el setup
+data/keys/
