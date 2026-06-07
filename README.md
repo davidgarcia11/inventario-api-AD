@@ -99,6 +99,37 @@ docker compose down              # para el stack, conserva los datos
 docker compose down -v           # también borra el volumen (BD vacía la próxima vez)
 ```
 
+## 🔐 Autenticación con JWT
+
+Todos los endpoints `/api/...` excepto `/api/auth/**`, Swagger y la documentación OpenAPI requieren un token JWT en la cabecera `Authorization: Bearer <token>`. Si falta o es inválido la API responde **401**.
+
+### Endpoints públicos
+| Método | Endpoint | Descripción |
+|---|---|---|
+| POST | `/api/auth/register` | Crea un usuario nuevo y devuelve un token. |
+| POST | `/api/auth/login` | Autentica al usuario y devuelve un token. |
+
+Ejemplo:
+```bash
+# 1) Registro
+curl -X POST http://localhost:8080/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"david","password":"secreto123"}'
+# -> { "token": "eyJ...", "username": "david", "expiresIn": 3600 }
+
+# 2) Llamada autenticada
+curl -H "Authorization: Bearer eyJ..." http://localhost:8080/api/productos
+```
+
+### Postman automatiza el token
+La colección **"Inventario API - COMPLETA (Con Filtros Combinados)"** incluye:
+- Un folder **"0. Autenticación"** con `register` y `login`.
+- Variables de colección: `authUsername`, `authPassword`, `authToken`, `authTokenExpiresAt`, `baseUrl`.
+- Un pre-request script global que, antes de cada request, comprueba si el token sigue vigente. Si no lo está, hace login automático y guarda el token en `authToken`. No tienes que pasar el token a mano nunca.
+- Auth Bearer global con `{{authToken}}`, así todas las requests heredan la cabecera sin tener que añadirla manualmente.
+
+Si quieres usar otras credenciales solo tienes que cambiar las variables `authUsername` / `authPassword` en la pestaña *Variables* de la colección.
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
