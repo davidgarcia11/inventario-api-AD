@@ -75,7 +75,9 @@ El Security Group es el "firewall" de la EC2: define qué puertos están abierto
 
 3. **Expandir "Advanced details"** (al final del formulario). Busca el campo **User data** y **pega el contenido completo del fichero [`deploy/user-data.sh`](deploy/user-data.sh)** del repo. Ese script se ejecuta como root al primer boot e instala Docker + arranca todo.
 
-   > ⚠️ Pega el script tal cual, sin modificar. Genera credenciales aleatorias en cada despliegue.
+   > ⚠️ Pega el script tal cual, sin modificar. Clona la rama `develop` (donde viven todas las features), genera credenciales aleatorias en cada despliegue.
+
+   > 🔓 El repo tiene que estar **público** en GitHub para que el `git clone` desde la EC2 funcione sin autenticación. Si lo tienes privado, ejecuta `gh repo edit <owner>/<repo> --visibility public` antes de lanzar la EC2.
 
 4. **Launch instance**.
 
