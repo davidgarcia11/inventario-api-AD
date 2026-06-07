@@ -1,0 +1,684 @@
+{
+  "info": {
+    "name": "Inventario API - Integration Tests",
+    "description": "Tests de integración pensados para ejecutarse con Newman (CLI de Postman) tanto en local como en la GitHub Action de integration-tests.yml. Cubre el flujo completo de la entidad Producto: alta, consulta, filtrado, actualización, borrado y los códigos de error principales (400 y 404).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "authUsername",
+      "value": "ci-tester"
+    },
+    {
+      "key": "authPassword",
+      "value": "ci-secret-123"
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    },
+    {
+      "key": "productoId",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "0. Auth",
+      "description": "Registra y autentica al usuario de pruebas. El token queda en {{authToken}}.",
+      "auth": {
+        "type": "noauth"
+      },
+      "item": [
+        {
+          "name": "Register usuario de pruebas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{authUsername}}\",\n  \"password\": \"{{authPassword}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Register devuelve 200 o 400 si el usuario ya existe', function () {",
+                  "    pm.expect([200, 400]).to.include(pm.response.code);",
+                  "});",
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.test('El response del Register tiene token', function () {",
+                  "        pm.expect(json).to.have.property('token');",
+                  "        pm.expect(json).to.have.property('username');",
+                  "        pm.expect(json).to.have.property('expiresIn');",
+                  "    });",
+                  "    pm.collectionVariables.set('authToken', json.token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{authUsername}}\",\n  \"password\": \"{{authPassword}}\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Login devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El response del Login tiene token, username y expiresIn', function () {",
+                  "    pm.expect(json).to.have.property('token').that.is.a('string');",
+                  "    pm.expect(json).to.have.property('username').that.eql(pm.collectionVariables.get('authUsername'));",
+                  "    pm.expect(json).to.have.property('expiresIn').that.is.a('number');",
+                  "});",
+                  "// Guardamos el token para que el resto de requests lo usen vía auth Bearer",
+                  "pm.collectionVariables.set('authToken', json.token);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1. Productos - Camino feliz",
+      "item": [
+        {
+          "name": "POST crear producto (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto Integration\",\n  \"sku\": \"INT-001\",\n  \"descripcion\": \"Producto para tests de integración\",\n  \"precioCosto\": 1.0,\n  \"precioVenta\": 1.5,\n  \"stockTotal\": 100\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST producto devuelve 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta tiene id, nombre y sku', function () {",
+                  "    pm.expect(json).to.have.property('id').that.is.a('number');",
+                  "    pm.expect(json).to.have.property('nombre');",
+                  "    pm.expect(json).to.have.property('sku');",
+                  "    pm.expect(json).to.have.property('precioVenta');",
+                  "    pm.expect(json).to.have.property('stockTotal');",
+                  "    pm.expect(json).to.have.property('activo').that.is.a('boolean');",
+                  "});",
+                  "pm.test('Los valores enviados coinciden con los guardados', function () {",
+                  "    pm.expect(json.nombre).to.eql('Producto Integration');",
+                  "    pm.expect(json.sku).to.eql('INT-001');",
+                  "    pm.expect(json.precioVenta).to.eql(1.5);",
+                  "    pm.expect(json.stockTotal).to.eql(100);",
+                  "    pm.expect(json.activo).to.eql(true);",
+                  "});",
+                  "// Guardamos el id para usarlo en GET/PUT/PATCH/DELETE",
+                  "pm.collectionVariables.set('productoId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET listar productos (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET listado devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta es un array no vacío', function () {",
+                  "    pm.expect(json).to.be.an('array');",
+                  "    pm.expect(json.length).to.be.greaterThan(0);",
+                  "});",
+                  "pm.test('Contiene el producto recién creado', function () {",
+                  "    const id = Number(pm.collectionVariables.get('productoId'));",
+                  "    const encontrado = json.find(p => p.id === id);",
+                  "    pm.expect(encontrado).to.not.be.undefined;",
+                  "    pm.expect(encontrado.sku).to.eql('INT-001');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET producto por id (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/{{productoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "{{productoId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET por id devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Los datos coinciden con el producto creado', function () {",
+                  "    pm.expect(json.id).to.eql(Number(pm.collectionVariables.get('productoId')));",
+                  "    pm.expect(json.sku).to.eql('INT-001');",
+                  "    pm.expect(json.nombre).to.eql('Producto Integration');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET con filtro nombre=Integration (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos?nombre=Integration",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "nombre",
+                  "value": "Integration"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET con filtro devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Todos los items contienen \"Integration\" en el nombre', function () {",
+                  "    pm.expect(json).to.be.an('array');",
+                  "    pm.expect(json.length).to.be.greaterThan(0);",
+                  "    json.forEach(p => {",
+                  "        pm.expect(p.nombre.toLowerCase()).to.include('integration');",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT actualizar producto (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/{{productoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "{{productoId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto Integration Actualizado\",\n  \"sku\": \"INT-001\",\n  \"precioVenta\": 2.5,\n  \"stockTotal\": 100\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PUT devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El nombre y precio se han actualizado', function () {",
+                  "    pm.expect(json.nombre).to.eql('Producto Integration Actualizado');",
+                  "    pm.expect(json.precioVenta).to.eql(2.5);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH parcial - solo stock (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/{{productoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "{{productoId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stockTotal\": 50\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PATCH devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Solo el stock se ha actualizado, el resto se preserva', function () {",
+                  "    pm.expect(json.stockTotal).to.eql(50);",
+                  "    // SKU no se ha tocado en el PATCH, debe seguir siendo el de antes",
+                  "    pm.expect(json.sku).to.eql('INT-001');",
+                  "    pm.expect(json.nombre).to.eql('Producto Integration Actualizado');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE producto (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/{{productoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "{{productoId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('DELETE devuelve 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test('El cuerpo de la respuesta está vacío', function () {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Productos - Casos de error",
+      "item": [
+        {
+          "name": "POST sin SKU (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sin SKU\",\n  \"precioVenta\": 1.0,\n  \"stockTotal\": 5\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST sin SKU devuelve 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta de error tiene codigo y mensaje', function () {",
+                  "    pm.expect(json).to.have.property('codigo').that.eql(400);",
+                  "    pm.expect(json).to.have.property('mensaje').that.is.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET id inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "999999"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET de id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta indica que no se encontró el producto', function () {",
+                  "    pm.expect(json.codigo).to.eql(404);",
+                  "    pm.expect(json.mensaje.toLowerCase()).to.include('no encontrado');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT id inexistente (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "999999"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"X\",\n  \"sku\": \"X\",\n  \"precioVenta\": 1.0,\n  \"stockTotal\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PUT de id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Body de error coherente', function () {",
+                  "    pm.expect(pm.response.json().codigo).to.eql(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH id inexistente (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "999999"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"stockTotal\": 10\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PATCH de id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE id inexistente (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "999999"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('DELETE de id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

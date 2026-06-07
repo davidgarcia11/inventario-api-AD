@@ -143,6 +143,50 @@ La V1 (endpoints existentes en `/api/...`) sigue funcionando exactamente igual. 
 
 Los 4 endpoints V2 también están en la colección Postman, en el folder **"V2 - Endpoints versionados"**, con la descripción del cambio en cada request.
 
+## 🧪 Tests de integración con Newman + GitHub Actions
+
+Además de los tests unitarios de JUnit (`./gradlew test`), el proyecto incluye una **colección Postman de tests de integración** que se ejecuta automáticamente en cada push.
+
+### Colección
+`Inventario API - Integration Tests.postman_collection.json` — 14 requests, 28 asserts. Cubre el flujo completo de Productos:
+
+1. **Auth** (folder 0): Register + Login, guardando el token en `{{authToken}}`.
+2. **Productos - Camino feliz** (folder 1): POST 201, GET listado, GET por id, GET con filtro, PUT, PATCH, DELETE.
+3. **Productos - Errores** (folder 2): POST 400, GET 404, PUT 404, PATCH 404, DELETE 404.
+
+Cada request comprueba **tres cosas** (lo que pide el enunciado de la 2ª evaluación):
+- **Status code** (201, 200, 400, 404, 204).
+- **Estructura** del JSON de respuesta (campos esperados, tipos correctos).
+- **Valores** concretos (ej.: el SKU enviado en POST debe ser el devuelto en GET).
+
+### Ejecutar Newman en local
+```bash
+# 1. Tener la API arrancada (perfil dev por defecto)
+./gradlew bootRun
+
+# 2. En otra terminal: instalar Newman si hace falta y correr la colección
+npm install -g newman
+newman run "Inventario API - Integration Tests.postman_collection.json"
+```
+
+### GitHub Action
+`.github/workflows/integration-tests.yml` se ejecuta en cada push a `main`, `develop`, `feature/**` y en cada PR. El workflow:
+
+1. Arranca un servicio **MariaDB 11** con healthcheck.
+2. Instala Java 21 + Node 20.
+3. Construye el JAR (`./gradlew bootJar -x test`).
+4. Arranca la API en segundo plano y espera a que `/api/auth/login` responda.
+5. Ejecuta `newman run` con reporter JUnit (para que GitHub muestre el resultado en la UI).
+6. Si algo falla, sube `app.log` como artifact para diagnosticar.
+7. Para la API al terminar.
+
+### Regenerar la colección
+El JSON de Postman se genera con un script Python para que sea mantenible:
+```bash
+python3 scripts/build_integration_postman.py
+```
+Si quieres añadir tests para otras entidades, edita `scripts/build_integration_postman.py` y vuelve a ejecutarlo.
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
