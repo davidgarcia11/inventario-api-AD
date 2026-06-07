@@ -41,9 +41,9 @@ curl -sSL "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_
 chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
 # ---- 2. Código de la API ----------------------------------------------------
-log "Clonando el repositorio..."
+log "Clonando el repositorio (rama develop, donde están todas las features)..."
 APP_DIR=/opt/inventario-api
-git clone https://github.com/davidgarcia11/inventario-api-AD.git "$APP_DIR"
+git clone -b develop https://github.com/davidgarcia11/inventario-api-AD.git "$APP_DIR"
 cd "$APP_DIR"
 
 # ---- 3. Secretos -----------------------------------------------------------
