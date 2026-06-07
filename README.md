@@ -1,8 +1,44 @@
 # Inventario API - Spring Boot
 
-API REST para gestión de inventario con Spring Boot 3.2.2 y MariaDB.
+API REST para gestión de inventario con Spring Boot 3.2.2 y MariaDB. Trabajo de la asignatura **Acceso a Datos** (DAM, 2º curso, SEAS / Fundación San Valero).
 
-**Estado:** ✅ Primera entrega completada
+**Estado:** ✅ 1ª y 2ª evaluación completadas.
+
+---
+
+## 🎓 Para el evaluador (2ª evaluación)
+
+| Requisito obligatorio | Dónde está implementado | Cómo verificarlo en 30 segundos |
+|---|---|---|
+| **#1 Versionado de 4 endpoints (GET/POST/PUT/DELETE)** | `src/main/java/.../controller/v2/` + 4 DTOs | `curl http://32.197.13.252:8080/api/v2/productos?page=0&size=2` |
+| **#2 Configuración externa (dev/prod, prod con MariaDB)** | `application.properties` + `application-dev.properties` + `application-prod.properties` | Sección [⚙️ Perfiles de configuración](#-perfiles-de-configuración) |
+| **#3 Despliegue en AWS** | [`DEPLOY.md`](DEPLOY.md) + [`deploy/user-data.sh`](deploy/user-data.sh) | Abrir `http://32.197.13.252:8080/swagger-ui/index.html` |
+| **#4 Tests de integración Postman + GitHub Actions** | [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) + colección `Inventario API - Integration Tests.postman_collection.json` | Pestaña [Actions del repo](https://github.com/davidgarcia11/inventario-api-AD/actions) — runs en verde |
+| **#5 Apiman con API Key + Rate Limit** | [`APIMAN.md`](APIMAN.md) + carpeta [`apiman/`](apiman/) | Sigue `APIMAN.md` para arrancar el stack y probar las dos políticas |
+
+| Otras funcionalidades (extras) | Dónde |
+|---|---|
+| **Git Flow durante todo el desarrollo** | 13 Pull Requests, ramas `feature/*`, `fix/*`, `develop` → `main`. Ver [historial de PRs](https://github.com/davidgarcia11/inventario-api-AD/pulls?q=is%3Apr+is%3Aclosed) |
+| **Docker Compose para API + BD** | `docker-compose.yml` |
+| **Docker Compose para entorno de pruebas** | `docker-compose.dev.yml` (solo MariaDB en :3306 para usar con `./gradlew bootRun`) |
+| **Securización con JWT + Postman auto-token** | `src/main/java/.../security/` + colección Postman con pre-request script |
+
+### Documentos clave del repo
+| Archivo | Para qué |
+|---|---|
+| [`README.md`](README.md) | Este documento. Quickstart, perfiles, Docker, JWT, V1/V2. |
+| [`DEPLOY.md`](DEPLOY.md) | Guía paso a paso del despliegue en AWS Academy. |
+| [`APIMAN.md`](APIMAN.md) | Guía paso a paso del API Manager (org, API, plan con 2 políticas, cliente, probar gateway). |
+| [`openapi.yaml`](openapi.yaml) | Contrato OpenAPI 3.0 (también accesible en `/v3/api-docs`). |
+
+### URL de la API desplegada
+- **API**: `http://32.197.13.252:8080` (EC2 t3.small, Amazon Linux 2023, Docker Compose).
+- **Swagger UI**: http://32.197.13.252:8080/swagger-ui/index.html
+- **OpenAPI JSON**: http://32.197.13.252:8080/v3/api-docs
+
+> ⚠️ Si la API no responde es porque la instancia EC2 del Learner Lab está parada. Avísame por correo y la arranco en menos de 1 minuto. La IP pública puede cambiar al re-arrancarla — el Swagger sigue siendo accesible en la nueva IP.
+
+---
 
 ## 📋 Requisitos
 
@@ -372,21 +408,10 @@ inventario-api-AD/
 - **Documentación:** SpringDoc OpenAPI 3.0
 - **Herramientas:** Postman, GitHub, Git Flow
 
-## 🚀 Próximas funcionalidades (Segunda entrega)
-
-- [ ] PATCH para actualización parcial de entidades
-- [ ] 3 nuevos endpoints con DTOs
-- [ ] Seguridad JWT
-- [ ] Consultas JPQL y SQL nativas
-- [ ] Manejo de archivos
-- [ ] Logging avanzado
-- [ ] 2 clases adicionales al modelo
-- [ ] Colección Postman parametrizada
-
 ## 👨‍💻 Autor
 
 DAVID GARCIA SESMA
 
 ## 📝 Licencia
 
-Proyecto académico - Acceso a Datos (DAM)
+Proyecto académico — Acceso a Datos (DAM), curso 2025-2026 (SEAS / Fundación San Valero).
