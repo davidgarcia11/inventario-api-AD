@@ -43,6 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html",
                                          "/v3/api-docs/**").permitAll()
+                        // /error es el endpoint interno al que Spring redirige
+                        // cuando salta MethodArgumentNotValidException u otras
+                        // excepciones no capturadas. Sin esto, un body inválido
+                        // a un endpoint protegido devolvería 401 en vez de 400.
+                        .requestMatchers("/error").permitAll()
                         // Preflight CORS
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         // Todo lo demás necesita JWT válido
