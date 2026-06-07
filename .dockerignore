@@ -1,0 +1,33 @@
+# Build artefacts y caché de Gradle: se regeneran dentro del contenedor
+build/
+.gradle/
+out/
+
+# Configuración de IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Control de versiones
+.git/
+.gitignore
+.gitattributes
+
+# Sistema operativo
+.DS_Store
+
+# Documentación / colecciones que no son necesarias para construir la imagen
+*.md
+*.postman_collection.json
+openapi.yaml
+HELP.md
+
+# Binarios externos (WireMock se usa solo en tests locales)
+*.jar
+
+# Logs y entorno local
+*.log
+logs/
+.env
+.env.local

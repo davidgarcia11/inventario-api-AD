@@ -74,6 +74,31 @@ SPRING_PROFILES_ACTIVE=prod \
 
 Si falta cualquiera de las variables, la aplicación falla al arrancar (intencionado).
 
+## 🐳 Ejecución con Docker
+
+### Stack completo (API + MariaDB)
+```bash
+cp .env.example .env          # ajusta usuario/contraseña antes de subir
+docker compose up --build     # la primera vez compila la imagen
+```
+- API: http://localhost:8080
+- MariaDB: `localhost:3307` (no choca con la MariaDB local si la tienes en 3306)
+- Perfil Spring activo: `docker` (`ddl-auto=update`, crea esquema la primera vez)
+
+### Solo BD para desarrollo local
+Si prefieres correr la API con `./gradlew bootRun` y solo necesitas la BD en contenedor:
+```bash
+docker compose -f docker-compose.dev.yml up -d
+./gradlew bootRun                  # perfil dev por defecto
+```
+Esto expone MariaDB en `localhost:3306` con `root/root` e `inventario_db` ya creada, justo lo que el perfil `dev` espera.
+
+### Parar y limpiar
+```bash
+docker compose down              # para el stack, conserva los datos
+docker compose down -v           # también borra el volumen (BD vacía la próxima vez)
+```
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
