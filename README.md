@@ -218,6 +218,18 @@ docker compose up -d
 
 > ⚠️ Apiman necesita ~8 GB de RAM y, en Mac ARM64, se ejecuta en emulación amd64 (lento). El primer arranque tarda varios minutos.
 
+## ☁️ Despliegue en AWS Academy
+
+La guía paso a paso para desplegar la API en una EC2 (t3.small, Amazon Linux 2023) está en **[DEPLOY.md](DEPLOY.md)**. Resumen:
+
+1. Inicia el Learner Lab y entra a la consola AWS.
+2. Crea un **Key Pair** y un **Security Group** (puerto 22 desde tu IP + puerto 8080 abierto).
+3. Lanza una EC2 `t3.small` con la AMI **Amazon Linux 2023** y pega [`deploy/user-data.sh`](deploy/user-data.sh) en el campo *User data*. Ese script al primer boot instala Docker, clona el repo, genera secretos aleatorios y arranca el stack con `docker compose up -d --build`.
+4. Espera 5–8 minutos. La API queda en `http://<ip-publica>:8080`.
+5. Apunta la variable `baseUrl` de la colección Postman a la IP pública.
+
+> No se despliega Apiman en AWS (necesita ~8 GB de RAM y 7 servicios; las instancias de Learner Lab son pequeñas).
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
