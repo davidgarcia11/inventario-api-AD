@@ -1499,6 +1499,132 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "V2 - Endpoints versionados",
+      "description": "Endpoints versionados de la 2ª evaluación. Cada uno mantiene su equivalente en la V1 sin tocar y añade una variante en /api/v2/... con cambios documentados en el campo description de cada request.",
+      "item": [
+        {
+          "name": "1. GET productos paginado (V2)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/productos?page=0&size=5&sort=id,desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "5"
+                },
+                {
+                  "key": "sort",
+                  "value": "id,desc"
+                }
+              ]
+            },
+            "description": "V2 del GET de productos. Devuelve una respuesta PAGINADA con metadatos (totalElements, totalPages, page, size...). Acepta los parámetros page, size y sort. La V1 (GET /api/productos) devuelve toda la lista de una vez, lo cual no escala."
+          },
+          "response": []
+        },
+        {
+          "name": "2. POST cliente con DTO + Location (V2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "clientes"
+              ]
+            },
+            "description": "V2 del POST de clientes. Recibe un DTO ClienteCreateRequest (no la entidad), email obligatorio con validación @Email, y devuelve 201 + header Location con la URL del recurso creado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Constructora López\",\n  \"email\": \"ventas@constructoralopez.com\",\n  \"telefono\": \"913456789\",\n  \"direccion\": \"Av Industria 22\",\n  \"ciudad\": \"Madrid\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. PUT almacén con DTO restringido (V2)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "1"
+              ]
+            },
+            "description": "V2 del PUT de almacenes. Recibe un DTO restringido que solo permite cambiar nombre, ubicación y stockActual. La capacidad máxima ya NO se modifica desde aquí (es una propiedad física del almacén).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 50\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. DELETE proveedor con ?hard=true (V2)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/proveedores/1?hard=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "proveedores",
+                "1"
+              ],
+              "query": [
+                {
+                  "key": "hard",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "V2 del DELETE de proveedores. Sin parámetros hace soft delete (igual que la V1, marca activo=false). Con ?hard=true borra el registro físicamente de la BD. Útil para GDPR o limpieza."
+          },
+          "response": []
+        }
+      ]
     }
   ],
   "variable": [

@@ -130,6 +130,19 @@ La colección **"Inventario API - COMPLETA (Con Filtros Combinados)"** incluye:
 
 Si quieres usar otras credenciales solo tienes que cambiar las variables `authUsername` / `authPassword` en la pestaña *Variables* de la colección.
 
+## 🧬 Versionado de la API (V1 y V2)
+
+La V1 (endpoints existentes en `/api/...`) sigue funcionando exactamente igual. La V2 introduce 4 endpoints alternativos en `/api/v2/...` con cambios en su comportamiento. Así se garantiza retrocompatibilidad: los clientes antiguos siguen usando V1 mientras los nuevos pueden adoptar V2.
+
+| Verbo | V1 | V2 | Cambio |
+|---|---|---|---|
+| GET | `/api/productos` | `/api/v2/productos?page=&size=&sort=` | Devuelve un objeto **paginado** (`content`, `totalElements`, `totalPages`...) en vez de la lista entera. |
+| POST | `/api/clientes` | `/api/v2/clientes` | Recibe un **DTO `ClienteCreateRequest`** con email obligatorio (`@Email`), no la entidad. Devuelve **201 + header `Location`**. |
+| PUT | `/api/almacenes/{id}` | `/api/v2/almacenes/{id}` | Recibe un **DTO restringido** (solo `nombre`, `ubicacion`, `stockActual`). La capacidad máxima ya no se cambia por aquí. |
+| DELETE | `/api/proveedores/{id}` | `/api/v2/proveedores/{id}?hard=true` | Sin parámetros sigue siendo soft delete. Con `?hard=true` borra el registro físicamente de la BD. |
+
+Los 4 endpoints V2 también están en la colección Postman, en el folder **"V2 - Endpoints versionados"**, con la descripción del cambio en cada request.
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
