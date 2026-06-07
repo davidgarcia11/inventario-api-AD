@@ -13,9 +13,9 @@ gradle-wrapper.jar
 # Maven
 target/
 
-# Spring Boot
-application.properties
-application.yml
+# Spring Boot — propiedades locales/secretas (las base sí se versionan)
+application-local.properties
+application-secrets.properties
 
 # Logs
 *.log
