@@ -39,6 +39,41 @@ Resultado esperado: **BUILD SUCCESSFUL** (106+ tests pasando)
 
 La API estará disponible en: `http://localhost:8080`
 
+## ⚙️ Perfiles de configuración
+
+La configuración está dividida en tres ficheros:
+
+| Fichero | Propósito |
+|---|---|
+| `application.properties` | Configuración común y elección del perfil por defecto (`dev`) |
+| `application-dev.properties` | Desarrollo local: MariaDB en `localhost:3306`, `root/root`, esquema recreado en cada arranque |
+| `application-prod.properties` | Producción: credenciales y URL inyectadas vía variables de entorno, `ddl-auto=validate` |
+
+### Arrancar en modo desarrollo (perfil por defecto)
+```bash
+./gradlew bootRun
+```
+
+### Arrancar en modo producción
+Define las variables de entorno y activa el perfil `prod`:
+```bash
+export DB_URL=jdbc:mariadb://mi-host-prod:3306/inventario_db
+export DB_USERNAME=mi_usuario
+export DB_PASSWORD=mi_password_seguro
+./gradlew bootRun --args='--spring.profiles.active=prod'
+```
+
+O ejecutando el JAR construido:
+```bash
+SPRING_PROFILES_ACTIVE=prod \
+  DB_URL=jdbc:mariadb://mi-host-prod:3306/inventario_db \
+  DB_USERNAME=mi_usuario \
+  DB_PASSWORD=mi_password_seguro \
+  java -jar build/libs/inventario-api-AD-0.0.1-SNAPSHOT.jar
+```
+
+Si falta cualquiera de las variables, la aplicación falla al arrancar (intencionado).
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
