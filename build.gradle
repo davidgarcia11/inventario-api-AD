@@ -39,6 +39,14 @@ dependencies {
     // OpenAPI
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
+    // Spring Security (autenticación JWT)
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    // Librería JJWT para generar y validar los tokens JWT
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
+    runtimeOnly    'io.jsonwebtoken:jjwt-impl:0.12.5'
+    runtimeOnly    'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
     // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -52,6 +60,9 @@ dependencies {
 
     // WireMock (Asegúrate de que esta línea está así)
     testImplementation 'org.wiremock:wiremock-standalone:3.3.1'
+
+    // Utilidades de tests de Spring Security (mockMvc con usuarios autenticados)
+    testImplementation 'org.springframework.security:spring-security-test'
 
 }
 
