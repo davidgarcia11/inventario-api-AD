@@ -58,3 +58,7 @@ volumes:
 networks:
   inventario-net:
     driver: bridge
+    # Fijamos el nombre para poder referenciar esta red desde otros
+    # compose files (como docker-compose.apiman.yml) sin tener que
+    # incluir el prefijo automático del proyecto.
+    name: inventario-net

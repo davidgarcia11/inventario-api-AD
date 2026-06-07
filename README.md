@@ -187,6 +187,37 @@ python3 scripts/build_integration_postman.py
 ```
 Si quieres añadir tests para otras entidades, edita `scripts/build_integration_postman.py` y vuelve a ejecutarlo.
 
+## 🛡️ Apiman — API Manager delante de la API
+
+El **Obligatorio #5** pide montar Apiman como API Manager. La idea:
+
+```
+Cliente ──HTTP──▶  Apiman Gateway  ──HTTP──▶  Inventario API
+                   (API Key + Rate Limit)      (JWT + lógica)
+```
+
+- Apiman vive en su propio Docker Compose, dentro del directorio [`apiman/`](apiman/).
+- La guía paso a paso completa (arrancar, configurar Org/API/Plan/Cliente, obtener API Key, probar políticas) está en **[APIMAN.md](APIMAN.md)**.
+- Colección Postman dedicada apuntando al gateway: `Inventario API - via Apiman.postman_collection.json`.
+
+### Resumen rápido
+```bash
+# 1) Stack principal
+docker compose up -d --build
+
+# 2) Inicializar secretos de Apiman (solo la primera vez)
+cd apiman
+docker compose -f docker-compose.setup.yml up
+
+# 3) Arrancar Apiman (5-10 min la primera vez)
+docker compose up -d
+
+# 4) Manager UI → http://localhost:7080/apimanui/  (admin/admin123!)
+# 5) Sigue APIMAN.md para configurar y probar
+```
+
+> ⚠️ Apiman necesita ~8 GB de RAM y, en Mac ARM64, se ejecuta en emulación amd64 (lento). El primer arranque tarda varios minutos.
+
 ## 📚 Endpoints CRUD (6 entidades)
 
 Cada entidad tiene operaciones CRUD completas:
