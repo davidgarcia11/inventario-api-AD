@@ -1502,15 +1502,15 @@
     },
     {
       "name": "V2 - Endpoints versionados",
-      "description": "Endpoints versionados de la 2ª evaluación. Cada uno mantiene su equivalente en la V1 sin tocar y añade una variante en /api/v2/... con cambios documentados en el campo description de cada request.",
+      "description": "Endpoints versionados de la 2ª evaluación (Obligatorio #1). Cubre los 4 endpoints V2 con sus happy paths y los códigos de error principales (400 y 404). Cada uno introduce un cambio documentado respecto a su versión V1: paginación, DTO de entrada con validación, DTO restringido y borrado físico opcional.",
       "item": [
         {
-          "name": "1. GET productos paginado (V2)",
+          "name": "GET v2 productos paginado (200)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v2/productos?page=0&size=5&sort=id,desc",
+              "raw": "{{baseUrl}}/api/v2/productos?page=0&size=2&sort=id,desc",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1526,7 +1526,7 @@
                 },
                 {
                   "key": "size",
-                  "value": "5"
+                  "value": "2"
                 },
                 {
                   "key": "sort",
@@ -1534,12 +1534,64 @@
                 }
               ]
             },
-            "description": "V2 del GET de productos. Devuelve una respuesta PAGINADA con metadatos (totalElements, totalPages, page, size...). Acepta los parámetros page, size y sort. La V1 (GET /api/productos) devuelve toda la lista de una vez, lo cual no escala."
+            "description": "Devuelve un PagedResponse con la primera página de productos. Usa los parámetros estándar de Spring Data: page, size y sort."
           },
           "response": []
         },
         {
-          "name": "2. POST cliente con DTO + Location (V2)",
+          "name": "GET v2 productos page negativo (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/productos?page=-1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "-1"
+                }
+              ]
+            },
+            "description": "El número de página no puede ser negativo. Espera 400 con codigo+mensaje."
+          },
+          "response": []
+        },
+        {
+          "name": "GET v2 productos size fuera de rango (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/productos?size=200",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "productos"
+              ],
+              "query": [
+                {
+                  "key": "size",
+                  "value": "200"
+                }
+              ]
+            },
+            "description": "El tamaño debe estar entre 1 y 100. Espera 400."
+          },
+          "response": []
+        },
+        {
+          "name": "POST v2 clientes con DTO (201)",
           "request": {
             "method": "POST",
             "header": [
@@ -1559,16 +1611,74 @@
                 "clientes"
               ]
             },
-            "description": "V2 del POST de clientes. Recibe un DTO ClienteCreateRequest (no la entidad), email obligatorio con validación @Email, y devuelve 201 + header Location con la URL del recurso creado.",
+            "description": "Crea un cliente con DTO. Devuelve 201 y cabecera Location apuntando al recurso.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Constructora López\",\n  \"email\": \"ventas@constructoralopez.com\",\n  \"telefono\": \"913456789\",\n  \"direccion\": \"Av Industria 22\",\n  \"ciudad\": \"Madrid\"\n}"
+              "raw": "{\n  \"nombre\": \"Constructora López\",\n  \"email\": \"contacto@constructoralopez.com\",\n  \"telefono\": \"913456789\",\n  \"ciudad\": \"Madrid\"\n}"
             }
           },
           "response": []
         },
         {
-          "name": "3. PUT almacén con DTO restringido (V2)",
+          "name": "POST v2 clientes sin email (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "clientes"
+              ]
+            },
+            "description": "El email es obligatorio. Espera 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Empresa Sin Email\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST v2 clientes email inválido (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/clientes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "clientes"
+              ]
+            },
+            "description": "El email tiene que tener formato válido. Espera 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"X\",\n  \"email\": \"no-es-un-email\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT v2 almacén con DTO restringido (200)",
           "request": {
             "method": "PUT",
             "header": [
@@ -1589,21 +1699,81 @@
                 "1"
               ]
             },
-            "description": "V2 del PUT de almacenes. Recibe un DTO restringido que solo permite cambiar nombre, ubicación y stockActual. La capacidad máxima ya NO se modifica desde aquí (es una propiedad física del almacén).",
+            "description": "Actualiza solo nombre, ubicación y stockActual. La capacidad máxima ya no se puede modificar por este endpoint.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 50\n}"
+              "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 6500\n}"
             }
           },
           "response": []
         },
         {
-          "name": "4. DELETE proveedor con ?hard=true (V2)",
+          "name": "PUT v2 almacén sin nombre (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "1"
+              ]
+            },
+            "description": "El nombre es obligatorio. Espera 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ubicacion\": \"Zaragoza\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT v2 almacén no encontrado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "999"
+              ]
+            },
+            "description": "No existe el almacén con ese ID. Espera 404.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"X\",\n  \"ubicacion\": \"Y\"\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE v2 proveedor soft (204)",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v2/proveedores/1?hard=true",
+              "raw": "{{baseUrl}}/api/v2/proveedores/1",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1612,6 +1782,27 @@
                 "v2",
                 "proveedores",
                 "1"
+              ]
+            },
+            "description": "Soft delete por defecto: marca activo=false. Sin body en la respuesta."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE v2 proveedor hard=true (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/proveedores/2?hard=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "proveedores",
+                "2"
               ],
               "query": [
                 {
@@ -1620,7 +1811,28 @@
                 }
               ]
             },
-            "description": "V2 del DELETE de proveedores. Sin parámetros hace soft delete (igual que la V1, marca activo=false). Con ?hard=true borra el registro físicamente de la BD. Útil para GDPR o limpieza."
+            "description": "Hard delete: borra el registro físicamente. Sin body en la respuesta."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE v2 proveedor no encontrado (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/proveedores/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "proveedores",
+                "999"
+              ]
+            },
+            "description": "No existe el proveedor con ese ID. Espera 404."
           },
           "response": []
         }

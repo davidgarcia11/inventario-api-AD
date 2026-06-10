@@ -4,6 +4,8 @@ import com.example.inventarioapiad.dto.AlmacenUpdateRequestV2;
 import com.example.inventarioapiad.entity.Almacen;
 import com.example.inventarioapiad.service.AlmacenService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -37,10 +39,66 @@ public class AlmacenV2Controller {
     @Operation(summary = "Actualizar almacén (V2)",
                description = "Actualiza solo nombre, ubicación y stockActual de un almacén.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Almacén actualizado"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Almacén no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno")
+            @ApiResponse(responseCode = "200", description = "Almacén actualizado",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Almacén con stock", value = """
+                                            {
+                                              "id": 1,
+                                              "nombre": "Almacén Central",
+                                              "ubicacion": "Zaragoza",
+                                              "capacidadMaxima": 10000,
+                                              "stockActual": 6500,
+                                              "responsable": "María García",
+                                              "activo": true,
+                                              "fechaCreacion": "2026-06-07T09:00:00"
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Almacén vacío", value = """
+                                            {
+                                              "id": 2,
+                                              "nombre": "Almacén Norte",
+                                              "ubicacion": "Bilbao",
+                                              "capacidadMaxima": 5000,
+                                              "stockActual": 0,
+                                              "responsable": null,
+                                              "activo": true,
+                                              "fechaCreacion": "2026-06-07T09:15:00"
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Nombre vacío", value = """
+                                            {
+                                              "codigo": 400,
+                                              "mensaje": "El nombre del almacén es obligatorio"
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Stock negativo", value = """
+                                            {
+                                              "codigo": 400,
+                                              "mensaje": "El stock actual no puede ser negativo"
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "404", description = "Almacén no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 404,
+                                      "mensaje": "Almacén no encontrado con ID: 999"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "500", description = "Error interno",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al actualizar el almacén: ..."
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> actualizar(@PathVariable Long id,
                                         @Valid @RequestBody AlmacenUpdateRequestV2 request) {
