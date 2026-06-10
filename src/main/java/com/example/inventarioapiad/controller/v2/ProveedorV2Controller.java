@@ -3,6 +3,8 @@ package com.example.inventarioapiad.controller.v2;
 import com.example.inventarioapiad.service.ProveedorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +37,39 @@ public class ProveedorV2Controller {
     @Operation(summary = "Eliminar proveedor (V2)",
                description = "Soft delete por defecto. Con ?hard=true borra el registro de la BD.")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Proveedor eliminado"),
-            @ApiResponse(responseCode = "400", description = "ID inválido"),
-            @ApiResponse(responseCode = "404", description = "Proveedor no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno")
+            @ApiResponse(responseCode = "204", description = "Proveedor eliminado. Sin cuerpo en la respuesta."),
+            @ApiResponse(responseCode = "400", description = "ID inválido",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 400,
+                                      "mensaje": "El ID debe ser válido"
+                                    }
+                                    """))),
+            @ApiResponse(responseCode = "404", description = "Proveedor no encontrado",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Soft delete sobre id inexistente", value = """
+                                            {
+                                              "codigo": 404,
+                                              "mensaje": "Proveedor no encontrado con ID: 999"
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Hard delete sobre id inexistente", value = """
+                                            {
+                                              "codigo": 404,
+                                              "mensaje": "Proveedor no encontrado con ID: 999"
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "500", description = "Error interno",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al eliminar el proveedor: ..."
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> eliminar(
             @PathVariable Long id,

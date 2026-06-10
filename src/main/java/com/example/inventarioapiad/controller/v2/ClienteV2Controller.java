@@ -4,6 +4,8 @@ import com.example.inventarioapiad.dto.ClienteCreateRequest;
 import com.example.inventarioapiad.entity.Cliente;
 import com.example.inventarioapiad.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -43,9 +45,58 @@ public class ClienteV2Controller {
     @Operation(summary = "Crear cliente (V2)",
                description = "Crea un cliente nuevo a partir de un DTO con email obligatorio y validado.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Cliente creado"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "500", description = "Error interno")
+            @ApiResponse(responseCode = "201", description = "Cliente creado. La cabecera Location apunta al nuevo recurso.",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Cliente completo", value = """
+                                            {
+                                              "id": 1,
+                                              "nombre": "Constructora López",
+                                              "email": "contacto@constructoralopez.com",
+                                              "telefono": "913456789",
+                                              "direccion": "Calle Mayor 10",
+                                              "ciudad": "Madrid",
+                                              "activo": true,
+                                              "fechaCreacion": "2026-06-07T10:30:00"
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Cliente con campos mínimos", value = """
+                                            {
+                                              "id": 2,
+                                              "nombre": "Empresa SA",
+                                              "email": "info@empresa.com",
+                                              "telefono": null,
+                                              "direccion": null,
+                                              "ciudad": null,
+                                              "activo": true,
+                                              "fechaCreacion": "2026-06-07T10:35:00"
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Email obligatorio", value = """
+                                            {
+                                              "codigo": 400,
+                                              "mensaje": "El email es obligatorio"
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Email mal formado", value = """
+                                            {
+                                              "codigo": 400,
+                                              "mensaje": "El email debe tener un formato válido"
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "500", description = "Error interno",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al crear el cliente: ..."
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> crear(@Valid @RequestBody ClienteCreateRequest request) {
         try {

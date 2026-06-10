@@ -5,6 +5,8 @@ import com.example.inventarioapiad.entity.Producto;
 import com.example.inventarioapiad.service.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +42,73 @@ public class ProductoV2Controller {
     @Operation(summary = "Listar productos paginados (V2)",
                description = "Devuelve un PagedResponse con los productos. Acepta page, size y sort.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Página de productos"),
-            @ApiResponse(responseCode = "400", description = "Parámetros inválidos"),
-            @ApiResponse(responseCode = "500", description = "Error interno")
+            @ApiResponse(responseCode = "200", description = "Página de productos",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Página por defecto", value = """
+                                            {
+                                              "content": [
+                                                {
+                                                  "id": 1,
+                                                  "nombre": "Tornillo M10",
+                                                  "sku": "TOR-M10",
+                                                  "precioVenta": 1.25,
+                                                  "stockTotal": 100,
+                                                  "activo": true
+                                                },
+                                                {
+                                                  "id": 2,
+                                                  "nombre": "Tuerca M10",
+                                                  "sku": "TUE-M10",
+                                                  "precioVenta": 0.50,
+                                                  "stockTotal": 500,
+                                                  "activo": true
+                                                }
+                                              ],
+                                              "page": 0,
+                                              "size": 10,
+                                              "totalElements": 2,
+                                              "totalPages": 1,
+                                              "first": true,
+                                              "last": true
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Página vacía", value = """
+                                            {
+                                              "content": [],
+                                              "page": 0,
+                                              "size": 10,
+                                              "totalElements": 0,
+                                              "totalPages": 0,
+                                              "first": true,
+                                              "last": true
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "400", description = "Parámetros inválidos",
+                    content = @Content(mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(name = "Página negativa", value = """
+                                            {
+                                              "codigo": 400,
+                                              "mensaje": "El número de página no puede ser negativo"
+                                            }
+                                            """),
+                                    @ExampleObject(name = "Tamaño fuera de rango", value = """
+                                            {
+                                              "codigo": 400,
+                                              "mensaje": "El tamaño debe estar entre 1 y 100"
+                                            }
+                                            """)
+                            })),
+            @ApiResponse(responseCode = "500", description = "Error interno",
+                    content = @Content(mediaType = "application/json",
+                            examples = @ExampleObject(value = """
+                                    {
+                                      "codigo": 500,
+                                      "mensaje": "Error al listar productos: ..."
+                                    }
+                                    """)))
     })
     public ResponseEntity<?> listarPaginado(
             @Parameter(description = "Número de página (0 indexado)")
