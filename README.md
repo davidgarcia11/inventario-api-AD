@@ -202,8 +202,17 @@ Cada request comprueba **tres cosas** (lo que pide el enunciado de la 2ª evalua
 
 # 2. En otra terminal: instalar Newman si hace falta y correr la colección
 npm install -g newman
-newman run "Inventario API - Integration Tests.postman_collection.json"
+newman run "Inventario API - Integration Tests.postman_collection.json" \
+  -e local.postman_environment.json
 ```
+
+Para correr la misma colección **contra la API desplegada en AWS** basta con cambiar el environment:
+```bash
+newman run "Inventario API - Integration Tests.postman_collection.json" \
+  -e aws.postman_environment.json
+```
+
+> Los environments separan los valores que cambian entre entornos (sobre todo `baseUrl`). La colección no contiene URLs hardcoded: lee `{{baseUrl}}` y el environment lo resuelve. Mismo patrón que enseña el profesor en sus apuntes.
 
 ### GitHub Action
 `.github/workflows/integration-tests.yml` se ejecuta en cada push a `main`, `develop`, `feature/**` y en cada PR. El workflow:
@@ -248,7 +257,7 @@ docker compose -f docker-compose.setup.yml up
 # 3) Arrancar Apiman (5-10 min la primera vez)
 docker compose up -d
 
-# 4) Manager UI → http://localhost:7080/apimanui/  (admin/admin123!)
+# 4) Manager UI → http://apiman.local.gd:8080/apimanui/  (admin/admin123!)
 # 5) Sigue APIMAN.md para configurar y probar
 ```
 
