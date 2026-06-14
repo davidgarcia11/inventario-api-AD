@@ -248,7 +248,7 @@ docker compose -f docker-compose.setup.yml up
 # 3) Arrancar Apiman (5-10 min la primera vez)
 docker compose up -d
 
-# 4) Manager UI → http://localhost:7080/apimanui/  (admin/admin123!)
+# 4) Manager UI → http://apiman.local.gd:8080/apimanui/  (admin/admin123!)
 # 5) Sigue APIMAN.md para configurar y probar
 ```
 

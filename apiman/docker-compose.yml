@@ -6,12 +6,6 @@ services:
     depends_on:
       - postgres
       - keycloak
-    # Exponemos el Manager directamente en 7080 del host. Antes el
-    # quickstart oficial usaba Traefik para enrutar por subdominio,
-    # pero el provider docker de Traefik no funciona bien con el
-    # Docker Desktop de Mac (no puede leer /var/run/docker.sock).
-    ports:
-      - "7080:8080"
     environment:
       # Keycloak SSO config
       - "APIMAN_AUTH_URL=${KEYCLOAK_PRIVATE_ENDPOINT}"
@@ -68,10 +62,6 @@ services:
     depends_on:
       elasticsearch:
           condition: service_healthy
-    # Gateway expuesto en 7081 (el puerto al que los clientes mandan
-    # las peticiones que Apiman reenviará a la API).
-    ports:
-      - "7081:8080"
     environment:
      # You can add these below (and modify conf-es.json) to customise SSL/TLS
       - >-
@@ -133,9 +123,10 @@ services:
       # - traefik.http.routers.gateway-management-router.rule=Host(`gateway-management.${APIMAN_HOSTNAME}`)
       # - traefik.http.routers.gateway-management-router.service=gateway-management-service
       # - traefik.http.services.gateway-management-service.loadbalancer.server.port=8081
-    # El gateway necesita resolver "inventario-api" para reenviarle el
-    # tráfico que recibe del cliente. Lo conectamos a ambas redes: la
-    # interna de Apiman (default) y la externa donde vive nuestra API.
+    # Conectamos el gateway a la red externa "inventario-net" (creada por
+    # el docker-compose.yml principal del repo) para que pueda resolver
+    # el hostname "inventario-api" y reenviarle el tráfico. Es lo único
+    # que modificamos del quickstart oficial.
     networks:
       - default
       - inventario-net
@@ -218,10 +209,6 @@ services:
     image: quay.io/keycloak/keycloak:21.1.2
     depends_on:
       - postgres
-    # Keycloak expuesto en 7082 del host. Necesario para que el navegador
-    # se pueda redirigir al login (el Manager le envía allí al iniciar sesión).
-    ports:
-      - "7082:8080"
     entrypoint: [ '/bin/bash', '-c' ]
     # ./bin/kc.sh build => build and deploy custom themes, providers, etc.
     # ./bin/kc.sh start-dev --import-realm => import Apiman realm, if not already imported.
@@ -241,13 +228,12 @@ services:
       # Keycloak default admin username and password
       - 'KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USERNAME}'
       - 'KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}'
-      # Keycloak networking config — apuntamos al puerto público (7082)
-      # para que el navegador llegue tras la redirección OIDC.
-      - 'KC_HOSTNAME=localhost'
+      # Keycloak networking config
+      - 'KC_HOSTNAME=auth.${APIMAN_HOSTNAME}'
       - 'KC_HOSTNAME_STRICT=false'
       - 'KC_HTTP_ENABLED=true'
       - 'KC_HTTP_PORT=8080'
-      - 'KC_HOSTNAME_PORT=7082'
+      - 'KC_HOSTNAME_PORT=8080'
       - 'KC_PROXY=edge'
       # KC Database config
       - 'KC_DB=postgres'
@@ -288,11 +274,24 @@ services:
       - traefik.http.routers.mailserver-router.service=mailserver-service
       - traefik.http.services.mailserver-service.loadbalancer.server.port=1080
 
-  # NOTA: el quickstart original de Apiman incluye un Traefik aquí
-  # (servicio reverse-proxy) que enruta por subdominio. Lo hemos eliminado
-  # porque en Docker Desktop for Mac el provider docker de Traefik no
-  # puede leer /var/run/docker.sock y todo cae en 404. En su lugar,
-  # mapeamos directamente los puertos del manager, el gateway y Keycloak.
+  reverse-proxy:
+    image: traefik:v2.10.3
+    command:
+      - --entrypoints.http.address=:8080
+      - --entrypoints.https.address=:8443
+      - --providers.docker
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    #labels:
+    #  # global redirect to https
+    #  - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
+    #  - "traefik.http.routers.http-catchall.entrypoints=http"
+    #  - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+    #  # middleware redirect
+    #  - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
 
 volumes:
   ui_logs:
@@ -311,12 +310,12 @@ volumes:
     driver: local
 
 # Redes:
-#   - default: red interna del stack Apiman (compose la crea sola).
-#     Manager, gateway, postgres, etc. se ven entre sí por aquí.
+#   - default: red interna del stack Apiman (compose la crea sola y se
+#     llama "apiman" por COMPOSE_PROJECT_NAME del .env). Manager, gateway,
+#     postgres, etc. se ven entre sí por aquí.
 #   - inventario-net: red EXTERNA creada por el docker-compose.yml
-#     principal del proyecto. La declaramos como external para que
-#     Apiman pueda hacer DNS a "inventario-api" (el contenedor de la
-#     API Spring Boot) y reenviar el tráfico.
+#     principal del proyecto. El gateway está en las dos para poder
+#     llegar a la API por DNS Docker como "inventario-api".
 networks:
   default:
     name: apiman
