@@ -4,10 +4,13 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-// DTO para actualizar un Almacén en la V2.
-// Solo permite cambiar nombre, ubicación y stockActual. La capacidad
-// máxima es una propiedad física del almacén y ya no se cambia por la
-// API operativa (cambia el modelo de negocio de la V1, que sí lo permitía).
+// DTO para actualizar un Almacén en la V2 (PUT).
+//
+// A diferencia de la V1, este DTO permite cambiar el campo "prioritario",
+// que es el campo "estrella" introducido en la V2. La capacidad máxima
+// sigue siendo NO modificable desde la V2 (es una propiedad física del
+// almacén) - eso refuerza el ejemplo del versionado: la V2 marca
+// claramente qué se puede tocar y qué no.
 @Data
 public class AlmacenUpdateRequestV2 {
 
@@ -19,4 +22,11 @@ public class AlmacenUpdateRequestV2 {
 
     @Min(value = 0, message = "El stock actual no puede ser negativo")
     private Integer stockActual;
+
+    private String responsable;
+
+    // Permite cambiar el estado prioritario del almacén.
+    // Si lo activas, el DELETE V2 dejará de funcionar hasta volver a
+    // ponerlo en false.
+    private Boolean prioritario;
 }

@@ -3,8 +3,6 @@ package com.example.inventarioapiad.service;
 import com.example.inventarioapiad.entity.Producto;
 import com.example.inventarioapiad.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
@@ -67,13 +65,6 @@ public class ProductoService {
     public List<Producto> buscarTodos() {
         log.info("Listando todos los productos");
         return (List<Producto>) productoRepository.findAll();
-    }
-
-    // READ ALL PAGINADO (lo usa el endpoint V2 /api/v2/productos)
-    public Page<Producto> buscarPaginado(Pageable pageable) {
-        log.info("Listando productos paginados - página: " + pageable.getPageNumber()
-                + ", tamaño: " + pageable.getPageSize());
-        return productoRepository.findAll(pageable);
     }
 
     // UPDATE

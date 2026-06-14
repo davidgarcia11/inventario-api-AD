@@ -98,18 +98,6 @@ public class ProveedorService {
         log.info("Proveedor eliminado (soft delete) con ID: " + id);
     }
 
-    // BORRADO FÍSICO (lo usa el endpoint V2 DELETE /api/v2/proveedores/{id}?hard=true)
-    // A diferencia de eliminar(), este sí borra realmente el registro de la BD.
-    public void eliminarFisico(Long id) {
-        log.info("Borrando físicamente proveedor con ID: " + id);
-
-        // Reutilizamos buscarPorId para que devuelva 404 si no existe
-        Proveedor proveedor = buscarPorId(id);
-        proveedorRepository.delete(proveedor);
-
-        log.info("Proveedor borrado físicamente con ID: " + id);
-    }
-
     // FILTRADO: Buscar proveedores con hasta 3 campos
     public List<Proveedor> buscarConFiltros(String nombre, String email, Integer diasEntrega) {
         log.info("Filtrando proveedores - nombre: " + nombre + ", email: " + email + ", diasEntrega: " + diasEntrega);
