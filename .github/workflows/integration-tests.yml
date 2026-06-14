@@ -97,8 +97,13 @@ jobs:
           exit 1
 
       - name: Ejecutar Newman contra la API
+        # -e local.postman_environment.json apunta a localhost:8080,
+        # que es donde está corriendo el JAR arrancado en el step anterior.
+        # Para correr la misma colección contra AWS, basta con cambiar el
+        # environment a aws.postman_environment.json.
         run: |
           newman run "Inventario API - Integration Tests.postman_collection.json" \
+            -e local.postman_environment.json \
             --reporters cli,junit \
             --reporter-junit-export newman-report.xml
 
