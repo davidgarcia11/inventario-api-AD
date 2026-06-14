@@ -1,19 +1,18 @@
 # APIMan — Guía paso a paso
 
-Esta guía explica cómo publicar la **Inventario API** detrás del **API Manager Apiman 3.1** (versión oficial), exigir un **API token** y aplicar **dos políticas** (API Key Authentication + Rate Limiting), tal y como pide el Obligatorio #5 de la 2ª evaluación.
+Guía para publicar la **Inventario API** detrás del **API Manager Apiman 3.1**, exigir un **API Token** y aplicar **dos políticas** (API Key Authentication + Rate Limiting). Cubre el Obligatorio #5 de la 2ª evaluación.
 
 ```
                               ┌──────────────────────────────────┐
-                              │ Apiman Gateway (localhost:7081)  │
+                              │ Apiman Gateway                   │
  Cliente Postman ──── HTTP ──►│  - Valida X-API-Key              │
                               │  - Aplica Rate Limit 100/min     │
                               └────────────────┬─────────────────┘
-                                               │  (red Docker
-                                               │   inventario-net)
+                                               │  red Docker
+                                               │  inventario-net
                                                ▼
                                 ┌────────────────────────────────┐
                                 │ Inventario API (Spring Boot)   │
-                                │  - Valida JWT                  │
                                 │  - Lógica CRUD + MariaDB       │
                                 └────────────────────────────────┘
 ```
@@ -22,15 +21,18 @@ Esta guía explica cómo publicar la **Inventario API** detrás del **API Manage
 
 ## 0. Prerequisitos
 
-- Docker Desktop arrancado, ~8 GB de RAM libres.
-- ⏱ La primera vez arrancar Apiman tarda **5–10 minutos** (descarga ~4 GB de imágenes + warm-up de Keycloak). Las siguientes veces, ~2 minutos.
+- Docker Desktop arrancado, **~8 GB de RAM libres**.
+- ⏱ La primera vez arrancar Apiman tarda **5–10 minutos** (descarga ~4 GB de imágenes + warm-up de Keycloak). Las siguientes veces, ~2 min.
 
-> ⚠️ En Mac con chip M-series (ARM64) las imágenes son amd64 → se ejecutan en emulación. Es esperable que vaya más lento que en Linux/Windows nativo.
+## Sobre este setup
 
-El stack está construido sobre el [quickstart oficial Apiman 3.1.3.Final](https://github.com/apiman/apiman/releases/tag/3.1.3.Final) con dos modificaciones:
+El directorio [`apiman/`](apiman/) contiene **el quickstart oficial de Apiman 3.1.3.Final tal cual** ([apiman.io/download.html](https://www.apiman.io/download.html) → pestaña Docker Compose) con **una sola modificación**: el servicio `apiman-gateway` se conecta también a la red externa `inventario-net` para poder resolver el hostname `inventario-api` y reenviarle el tráfico.
 
-1. **Eliminado Traefik** (el reverse-proxy). El provider docker de Traefik no funciona bien con el socket de Docker Desktop for Mac. En su lugar exponemos cada servicio en puertos directos del host.
-2. El gateway de Apiman se enchufa también a la red `inventario-net` para resolver el hostname `inventario-api`.
+> ⚠️ **Aviso para usuarios de Docker Desktop for Mac (chip M-series)**: el quickstart oficial usa Traefik como reverse-proxy, y Traefik se apoya en su provider docker que en Docker Desktop for Mac **no puede leer correctamente el socket `/var/run/docker.sock`**. Resultado: el Manager UI devuelve 404 en `apiman.local.gd:8080`. Es un problema conocido (ver [Apiman discussions](https://github.com/orgs/apiman/discussions)).
+>
+> Si tu equipo es Linux o Windows con Docker Desktop, el setup funciona tal cual.
+>
+> Si estás en Mac y necesitas que arranque sí o sí para una demo, comenta temporalmente el servicio `reverse-proxy` del `docker-compose.yml` y añade `ports: - "7080:8080"` al servicio `apiman-manager` (o cualquier puerto libre).
 
 ---
 
@@ -57,21 +59,23 @@ docker compose ps
 # → "apiman-apiman-manager-1 ... (healthy)"
 ```
 
+> El dominio `local.gd` es un DNS público que apunta a `127.0.0.1` para cualquier subdominio. No hace falta tocar `/etc/hosts`.
+
 URLs útiles tras el arranque:
 
 | Componente | URL | Credenciales |
 |---|---|---|
-| **Manager UI** | http://localhost:7080/apimanui/ | `admin` / `admin123!` |
-| Manager API | http://localhost:7080/apiman/system/status | — |
-| **Gateway** | http://localhost:7081/ | — |
-| **Keycloak Admin** | http://localhost:7082/admin/ | `admin` / `admin123!` |
-| Mailserver mock | (no expuesto) | — |
+| **Manager UI** | http://apiman.local.gd:8080/apimanui/ | `admin` / `admin123!` |
+| Developer Portal | http://apiman.local.gd:8080/portal/ | — |
+| **Gateway** | http://gateway.local.gd:8080/ | — |
+| **Keycloak Admin** | http://auth.local.gd:8080/admin/ | `admin` / `admin123!` |
+| Mailserver mock | http://mail.local.gd:8080/ | — |
 
 ---
 
 ## 2. Crear la organización
 
-1. Entra al Manager UI: http://localhost:7080/apimanui/
+1. Entra al Manager UI: http://apiman.local.gd:8080/apimanui/
 2. Login con `admin` / `admin123!` (te redirige a Keycloak).
 3. **New Organization** (esquina superior derecha).
 4. Rellena:
@@ -160,42 +164,25 @@ Una vez registrado, en la pestaña **APIs** del cliente verás un campo **API Ke
 La URL del gateway para nuestra API es:
 
 ```
-http://localhost:7081/InventarioOrg/InventarioAPI/1.0
+http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0
 ```
 
 Hay que mandar `X-API-Key: <tu-api-key>` en cada petición.
 
 ### Sin API key (debe rechazar)
 ```bash
-curl -i http://localhost:7081/InventarioOrg/InventarioAPI/1.0/api/auth/register \
-  -X POST -H "Content-Type: application/json" \
-  -d '{"username":"david","password":"secreto123"}'
+curl -i http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0/api/productos
 # → 403 Forbidden, "API key required"
 ```
 
-### Con API key (debe pasar y devolver el JWT)
+### Con API key
 ```bash
 APIKEY=<pega-aqui-tu-key>
 
-curl -X POST \
-  -H "X-API-Key: $APIKEY" \
-  -H "Content-Type: application/json" \
-  -d '{"username":"david","password":"secreto123"}' \
-  http://localhost:7081/InventarioOrg/InventarioAPI/1.0/api/auth/register
-# → { "token": "eyJ...", "username": "david", "expiresIn": 3600 }
-```
-
-### Llamada autenticada (API key + JWT)
-```bash
-TOKEN=<pega-aqui-el-token-jwt>
-
 curl -H "X-API-Key: $APIKEY" \
-     -H "Authorization: Bearer $TOKEN" \
-     http://localhost:7081/InventarioOrg/InventarioAPI/1.0/api/productos
+     http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0/api/productos
 # → [] HTTP 200
 ```
-
-> Las dos protecciones actúan en cascada: Apiman valida la API Key en el gateway; nuestra API valida el JWT con Spring Security. Si falta cualquiera de los dos, la petición falla.
 
 ### Probar el rate limit (la 2ª política)
 Lanza más de 100 peticiones por minuto y a partir de la 101 verás `429 Too Many Requests` devuelto por Apiman, sin llegar a la API:
@@ -204,8 +191,7 @@ Lanza más de 100 peticiones por minuto y a partir de la 101 verás `429 Too Man
 for i in $(seq 1 110); do
   curl -s -o /dev/null -w "%{http_code} " \
     -H "X-API-Key: $APIKEY" \
-    -H "Authorization: Bearer $TOKEN" \
-    http://localhost:7081/InventarioOrg/InventarioAPI/1.0/api/productos
+    http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0/api/productos
 done
 # → 200 200 ... 200 429 429 429
 ```
@@ -221,15 +207,10 @@ Variables de colección:
 
 | Variable | Valor por defecto |
 |---|---|
-| `apimanGateway` | `http://localhost:7081/InventarioOrg/InventarioAPI/1.0` |
+| `apimanGateway` | `http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0` |
 | `apiKey` | *(pega aquí la key obtenida en el paso 6)* |
-| `authUsername` | `david` |
-| `authPassword` | `secreto123` |
-| `authToken` | *(se rellena automáticamente con el pre-request script)* |
 
-Cada request lleva:
-- `X-API-Key: {{apiKey}}` → para Apiman.
-- `Authorization: Bearer {{authToken}}` → para Spring Security, lo gestiona el pre-request script.
+Cada request lleva la cabecera `X-API-Key: {{apiKey}}` para Apiman.
 
 El folder **"2. Probar políticas de Apiman"** incluye:
 - Una request **sin** `X-API-Key` para que veas que el gateway responde 403.
@@ -258,9 +239,9 @@ cd apiman && docker compose down -v
 | Síntoma | Causa probable | Solución |
 |---|---|---|
 | Manager UI tarda en cargar | Apiman aún arrancando | Espera 5 min y `docker compose ps` para ver healthcheck |
-| `404` al entrar al manager | Apiman aún no terminó el warm-up | Espera, en ARM puede tardar más |
-| Login al manager redirige y vuelve | Keycloak no le da el cookie | Comprueba `KC_HOSTNAME` y `KC_HOSTNAME_PORT` en el compose |
+| `404` en `apiman.local.gd:8080` en Mac | Traefik no puede leer el socket Docker en Docker Desktop for Mac | Ver el aviso en la sección "Sobre este setup". Mapear puerto directo al manager. |
+| Login redirige y vuelve sin entrar | Keycloak no tiene cookie válido | Comprueba `KC_HOSTNAME` y `KC_HOSTNAME_PORT` en el compose |
 | Gateway responde 404 al llamar a `/api/...` | Falta publicar la API o crear el contrato | Repite pasos 5 y 6 |
-| Gateway responde 502 Bad Gateway | El gateway no llega a `inventario-api:8080` | `docker network inspect inventario-net` para verificar que el contenedor de la API y el de Apiman gateway están ahí |
+| Gateway responde 502 Bad Gateway | El gateway no llega a `inventario-api:8080` | `docker network inspect inventario-net`: verifica que `inventario-api` y `apiman-apiman-gateway-1` están en la red |
 | Gateway responde 401 sin pasar a la API | Falta `X-API-Key` o no coincide | Revisa la key en `Clients → PostmanClient → APIs` |
 | Gateway responde 429 al primer request | El rate limit ya está aplicado | Espera 1 minuto o sube el límite en el plan |

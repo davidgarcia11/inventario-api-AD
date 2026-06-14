@@ -282,7 +282,7 @@ collection = {
     "variable": [
         {
             "key": "apimanGateway",
-            "value": "http://localhost:7081/InventarioOrg/InventarioAPI/1.0",
+            "value": "http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0",
             "description": "URL base del gateway de Apiman para esta API.",
         },
         {
