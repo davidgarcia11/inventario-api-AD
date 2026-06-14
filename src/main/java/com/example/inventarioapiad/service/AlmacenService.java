@@ -3,13 +3,14 @@ package com.example.inventarioapiad.service;
 import com.example.inventarioapiad.entity.Almacen;
 import com.example.inventarioapiad.repository.AlmacenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -97,6 +98,37 @@ public class AlmacenService {
         almacenRepository.save(almacen);
 
         log.info("Almacén eliminado (soft delete) con ID: " + id);
+    }
+
+    // -------------------------------------------------------------------
+    // Métodos extra que usa la V2 (paginado y borrado condicional por
+    // el campo "prioritario"). Se mantienen aquí para no duplicar lógica.
+    // -------------------------------------------------------------------
+
+    // Lista paginada de almacenes. Lo usa el endpoint GET /api/v2/almacenes.
+    public Page<Almacen> buscarPaginado(Pageable pageable) {
+        log.info("Listando almacenes paginados - página: " + pageable.getPageNumber()
+                + ", tamaño: " + pageable.getPageSize());
+        return almacenRepository.findAll(pageable);
+    }
+
+    // Borrado especial usado por la V2: si el almacén está marcado como
+    // prioritario, se rechaza con una IllegalStateException (el controller
+    // la mapea a un 409 Conflict). Si no es prioritario, se hace soft
+    // delete como en la V1.
+    public void eliminarSiNoPrioritario(Long id) {
+        log.info("Intentando eliminar almacén V2 con ID: " + id);
+
+        Almacen almacen = buscarPorId(id);
+        if (Boolean.TRUE.equals(almacen.getPrioritario())) {
+            log.error("Bloqueo: el almacén ID " + id + " es prioritario, no se puede eliminar");
+            throw new IllegalStateException(
+                    "No se puede eliminar un almacén prioritario. Marca prioritario=false antes de borrar.");
+        }
+
+        almacen.setActivo(false);
+        almacenRepository.save(almacen);
+        log.info("Almacén V2 eliminado (soft delete) con ID: " + id);
     }
 
     // FILTRADO: Buscar almacenes con hasta 3 campos

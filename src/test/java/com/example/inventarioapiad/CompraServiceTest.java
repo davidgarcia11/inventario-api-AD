@@ -33,7 +33,7 @@ public class CompraServiceTest {
         Compra compra = new Compra();
         compra.setProveedor(new Proveedor(1L, "Proveedor", "email@test.com", null, null, null, true, null));
         compra.setProducto(new Producto(1L, "Producto", "SKU", null, 0.5f, 1.0f, 100, true, null));
-        compra.setAlmacen(new Almacen(1L, "Almacén", "Ubicación", 10000, 5000, null, true, null));
+        compra.setAlmacen(new Almacen(1L, "Almacén", "Ubicación", 10000, 5000, null, true, false, null));
         compra.setCantidad(100);
         compra.setPrecioUnitario(1.0f);
         compra.setFechaCompra(LocalDateTime.now());
