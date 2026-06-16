@@ -81,8 +81,8 @@ public class AlmacenServiceTest {
     @Test
     public void testBuscarTodos() {
         when(almacenRepository.findAll()).thenReturn(java.util.Arrays.asList(
-                new Almacen(1L, "Almacén 1", "Ubicación 1", 10000, 5000, "Responsable 1", true, null),
-                new Almacen(2L, "Almacén 2", "Ubicación 2", 8000, 3000, "Responsable 2", true, null)
+                new Almacen(1L, "Almacén 1", "Ubicación 1", 10000, 5000, "Responsable 1", true, false, null),
+                new Almacen(2L, "Almacén 2", "Ubicación 2", 8000, 3000, "Responsable 2", true, false, null)
         ));
 
         java.util.List<Almacen> resultado = almacenService.buscarConFiltros(null, null, null);

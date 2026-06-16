@@ -35,6 +35,13 @@ public class Almacen {
     @Column(nullable = false)
     private Boolean activo = true;
 
+    // Marca si el almacén es "prioritario" (instalación estratégica que no
+    // debe perderse fácilmente). El DELETE de la V2 rechaza con 409 si
+    // este flag es true. Se introduce en la V2 para dar sentido al
+    // versionado: todos los endpoints V2 giran en torno a este campo.
+    @Column(nullable = false)
+    private Boolean prioritario = false;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 }

@@ -33,7 +33,7 @@ public class VentaServiceTest {
         Venta venta = new Venta();
         venta.setCliente(new Cliente(1L, "Cliente", "email@test.com", null, null, null, true, null));
         venta.setProducto(new Producto(1L, "Producto", "SKU", null, 0.5f, 1.0f, 100, true, null));
-        venta.setAlmacen(new Almacen(1L, "Almacén", "Ubicación", 10000, 5000, null, true, null));
+        venta.setAlmacen(new Almacen(1L, "Almacén", "Ubicación", 10000, 5000, null, true, false, null));
         venta.setCantidad(50);
         venta.setPrecioUnitario(1.50f);
         venta.setFechaVenta(LocalDateTime.now());
