@@ -68,10 +68,22 @@ public class AlmacenService {
         if (almacenActualizado.getUbicacion() != null && !almacenActualizado.getUbicacion().isBlank()) {
             almacen.setUbicacion(almacenActualizado.getUbicacion());
         }
-        if (almacenActualizado.getCapacidadMaxima() != null && almacenActualizado.getCapacidadMaxima() > 0) {
+        // Si el cliente envía estos campos, los validamos y rechazamos los
+        // valores fuera de rango. Antes se ignoraban en silencio: un PUT con
+        // capacidadMaxima=0 respondía 200 sin cambiar nada, confundiendo al
+        // cliente. Misma corrección que se aplicó a ProductoService.
+        if (almacenActualizado.getCapacidadMaxima() != null) {
+            if (almacenActualizado.getCapacidadMaxima() <= 0) {
+                log.error("Error: Capacidad máxima inválida");
+                throw new IllegalArgumentException("La capacidad máxima debe ser mayor a 0");
+            }
             almacen.setCapacidadMaxima(almacenActualizado.getCapacidadMaxima());
         }
-        if (almacenActualizado.getStockActual() != null && almacenActualizado.getStockActual() >= 0) {
+        if (almacenActualizado.getStockActual() != null) {
+            if (almacenActualizado.getStockActual() < 0) {
+                log.error("Error: Stock actual negativo");
+                throw new IllegalArgumentException("El stock actual no puede ser negativo");
+            }
             almacen.setStockActual(almacenActualizado.getStockActual());
         }
         if (almacenActualizado.getResponsable() != null) {
