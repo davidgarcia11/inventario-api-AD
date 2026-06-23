@@ -24,6 +24,14 @@
     {
       "key": "productoId",
       "value": ""
+    },
+    {
+      "key": "almacenId",
+      "value": ""
+    },
+    {
+      "key": "almacenPrioritarioId",
+      "value": ""
     }
   ],
   "auth": {
@@ -671,6 +679,400 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('DELETE de id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Almacenes V2 - Camino feliz",
+      "description": "Cubre los 4 endpoints V2 (GET paginado, POST con prioritario, PUT que cambia prioritario, DELETE con bloqueo 409 si es prioritario).",
+      "item": [
+        {
+          "name": "POST crear almacén normal V2 (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Crea un almacén V2 con prioritario=false. Guarda el id en {{almacenId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Test Normal\",\n  \"ubicacion\": \"Zaragoza\",\n  \"capacidadMaxima\": 1000,\n  \"stockActual\": 0,\n  \"responsable\": \"CI Tester\",\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST V2 devuelve 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta contiene id y prioritario=false', function () {",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('prioritario').that.eql(false);",
+                  "});",
+                  "pm.collectionVariables.set('almacenId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST crear almacén prioritario V2 (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Crea un almacén V2 con prioritario=true. Guarda el id en {{almacenPrioritarioId}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Test Prioritario\",\n  \"ubicacion\": \"Madrid\",\n  \"capacidadMaxima\": 5000,\n  \"stockActual\": 0,\n  \"responsable\": \"CI Tester\",\n  \"prioritario\": true\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST V2 prioritario devuelve 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta contiene id y prioritario=true', function () {",
+                  "    pm.expect(json).to.have.property('id');",
+                  "    pm.expect(json).to.have.property('prioritario').that.eql(true);",
+                  "});",
+                  "pm.collectionVariables.set('almacenPrioritarioId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET listado paginado V2 (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes?page=0&size=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listado paginado V2. Verifica que la respuesta lleva content/page/size/totalElements y que los almacenes traen el campo prioritario."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET V2 paginado devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta tiene la estructura paginada', function () {",
+                  "    pm.expect(json).to.have.property('content').that.is.an('array');",
+                  "    pm.expect(json).to.have.property('page');",
+                  "    pm.expect(json).to.have.property('size');",
+                  "    pm.expect(json).to.have.property('totalElements');",
+                  "});",
+                  "pm.test('Los almacenes traen el campo prioritario', function () {",
+                  "    pm.expect(json.content.length).to.be.greaterThan(0);",
+                  "    json.content.forEach(a => pm.expect(a).to.have.property('prioritario'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE almacén prioritario - bloqueado (409)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "Intenta borrar un almacén marcado como prioritario. Debe devolver 409 Conflict."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('DELETE de almacén prioritario devuelve 409', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El cuerpo de error indica 409 y motivo prioritario', function () {",
+                  "    pm.expect(json).to.have.property('codigo').that.eql(409);",
+                  "    pm.expect(json.mensaje.toLowerCase()).to.include('prioritario');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT despriorizar almacén V2 (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "Cambia prioritario=true a false. Permite que el DELETE siguiente funcione.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Test Prioritario\",\n  \"ubicacion\": \"Madrid\",\n  \"stockActual\": 0,\n  \"responsable\": \"CI Tester\",\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PUT V2 devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El almacén ya no es prioritario', function () {",
+                  "    pm.expect(json).to.have.property('prioritario').that.eql(false);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE almacén ya no prioritario (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "Ahora que prioritario=false, el borrado debe funcionar."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('DELETE V2 devuelve 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});",
+                  "pm.test('El cuerpo de la respuesta está vacío', function () {",
+                  "    pm.expect(pm.response.text()).to.eql('');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE almacén normal V2 (204) - limpieza",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/{{almacenId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenId}}"
+              ]
+            },
+            "description": "Borra el almacén normal creado al inicio para no dejar datos residuales."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('DELETE V2 normal devuelve 204', function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Almacenes V2 - Casos de error",
+      "item": [
+        {
+          "name": "POST sin nombre V2 (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Falta el nombre (obligatorio). Debe devolver 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ubicacion\": \"Bilbao\",\n  \"capacidadMaxima\": 100,\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST V2 sin nombre devuelve 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE V2 id inexistente (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "999999"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('DELETE V2 id inexistente devuelve 404', function () {",
                   "    pm.response.to.have.status(404);",
                   "});"
                 ]
