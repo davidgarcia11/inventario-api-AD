@@ -1,0 +1,131 @@
+{
+  "info": {
+    "name": "Seed AWS - Almacenes de muestra",
+    "description": "Colección de un solo uso para cargar datos de demo en la EC2 antes de la defensa. Crea 3 almacenes V1 (normales) y 1 almacén V2 (prioritario) que permite enseñar el bloqueo del DELETE con 409.\n\nUso:\n  newman run deploy/seed-aws-almacenes.postman_collection.json -e aws.postman_environment.json\n\nIdempotente: si los almacenes ya existen, la BD los crea con id nuevo (no hay unique por nombre), no rompe nada.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "POST V1 - Almacén Central Zaragoza",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/almacenes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "almacenes"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Almacén Central Zaragoza\",\n  \"ubicacion\": \"Polígono Malpica, Zaragoza\",\n  \"capacidadMaxima\": 10000,\n  \"stockActual\": 6500,\n  \"responsable\": \"María García\",\n  \"activo\": true\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Creado (201)', function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST V1 - Almacén Norte Bilbao",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/almacenes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "almacenes"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Almacén Norte Bilbao\",\n  \"ubicacion\": \"Polígono Asua, Bilbao\",\n  \"capacidadMaxima\": 5000,\n  \"stockActual\": 1200,\n  \"responsable\": \"Iker Etxeberria\",\n  \"activo\": true\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Creado (201)', function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST V1 - Almacén Sur Sevilla",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/almacenes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "almacenes"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Almacén Sur Sevilla\",\n  \"ubicacion\": \"Polígono La Isla, Dos Hermanas\",\n  \"capacidadMaxima\": 7000,\n  \"stockActual\": 3300,\n  \"responsable\": \"Lucía Romero\",\n  \"activo\": true\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Creado (201)', function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "POST V2 - Almacén Crítico Madrid (prioritario)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/v2/almacenes",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v2", "almacenes"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Almacén Crítico Madrid\",\n  \"ubicacion\": \"Mercamadrid, Madrid\",\n  \"capacidadMaxima\": 15000,\n  \"stockActual\": 12000,\n  \"responsable\": \"Carlos Ruiz\",\n  \"prioritario\": true\n}"
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Creado (201)', function () { pm.response.to.have.status(201); });",
+              "const json = pm.response.json();",
+              "pm.test('Es prioritario', function () { pm.expect(json.prioritario).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
