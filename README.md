@@ -90,6 +90,18 @@ La configuración está dividida en tres ficheros:
 ./gradlew bootRun
 ```
 
+### Cambiar de perfil sin tocar el código (Docker)
+
+El docker-compose principal lee el perfil del `.env`. Para cambiar entre `docker`, `dev` y `prod` basta editar UNA línea y recrear el container:
+
+```bash
+sed -i 's/^SPRING_PROFILE=.*/SPRING_PROFILE=dev/' .env   # o docker / prod
+docker compose up -d --force-recreate api
+curl http://localhost:8090/api/info
+```
+
+El endpoint `/api/info` confirma el perfil activo y si DataSeeder ha cargado datos.
+
 ### Arrancar en modo producción
 Define las variables de entorno y activa el perfil `prod`:
 ```bash

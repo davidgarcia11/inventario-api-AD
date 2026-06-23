@@ -79,24 +79,23 @@ Respuesta esperada:
 
 > "Este es el perfil `docker`: BD vacía, credenciales desde `.env`. Es el mismo perfil que corre en AWS."
 
-**B2. Cambiar a perfil `dev` (datos de muestra cargados).**
+**B2. Cambiar a perfil `dev` (datos de muestra cargados) sin parar el container.**
 
-En terminal, paramos el container y arrancamos en perfil dev con bootRun:
+Editamos el `.env` para cambiar el perfil, y reiniciamos el container:
 
 ```bash
-docker compose stop api
-./gradlew bootRun --args="--server.port=8090 --spring.profiles.active=dev"
+sed -i 's/^SPRING_PROFILE=.*/SPRING_PROFILE=dev/' .env
+docker compose up -d --force-recreate api
+sleep 20
 ```
 
-Espera a `Started InventarioApiAdApplication`. Vuelve al navegador:
+Vuelve al navegador:
 
 ```
 http://localhost:8090/api/info
 ```
 
-> "Mismo endpoint, MISMO PUERTO, pero ahora `perfilActivo: dev` y `datosDeMuestraAlArrancar: true`. La BD se ha recreado (`ddl-auto=create-drop`) y `DataSeederConfig` ha cargado 3 almacenes."
-
-Y para demostrarlo:
+> "Mismo endpoint, MISMO contenedor, MISMA configuración externa de BD — solo he cambiado UNA variable en el `.env`. Ahora `perfilActivo: dev`, `datosDeMuestraAlArrancar: true`. La BD se ha recreado (`ddl-auto=create-drop`) y `DataSeederConfig` ha cargado 3 almacenes."
 
 ```
 http://localhost:8090/api/almacenes
@@ -104,21 +103,32 @@ http://localhost:8090/api/almacenes
 
 → Devuelve los 3 almacenes (Central, Norte, Sur).
 
-**B3. Enseñar el código.**
+**B3. Probar el perfil `prod`.**
+
+```bash
+sed -i 's/^SPRING_PROFILE=.*/SPRING_PROFILE=prod/' .env
+docker compose up -d --force-recreate api
+sleep 20
+curl http://localhost:8090/api/info
+```
+
+> "Perfil `prod`: `ddl-auto=validate` — la app arranca solo si el esquema coincide. No carga datos. Si una variable de entorno requerida (DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET) falta, la app no arranca. Eso es **configuración externa**: el código es el mismo, el comportamiento cambia según el perfil y las env vars que vienen de fuera."
+
+**B4. Enseñar el código.**
 
 IntelliJ → abrir [DataSeederConfig.java](src/main/java/com/example/inventarioapiad/config/DataSeederConfig.java):
 
 > "La clase está anotada con `@Profile("dev")`, así que solo se carga si el perfil activo es `dev`. En `dev` se crean 3 almacenes de muestra; en `docker` y `prod` no."
 
-Abrir `src/main/resources/application-dev.properties` y `application-prod.properties`:
+Abrir `src/main/resources/application-dev.properties`, `application-docker.properties` y `application-prod.properties`:
 
-> "Cada perfil tiene su propio archivo con `ddl-auto` distinto: `create-drop` en dev (BD se rehace en cada arranque), `validate` en prod (la BD no se toca, solo se valida el esquema)."
+> "Cada perfil tiene su propio archivo con `ddl-auto` distinto: `create-drop` en dev (BD se rehace en cada arranque), `update` en docker (compatible con migraciones), `validate` en prod (la BD no se toca, solo se valida el esquema)."
 
-**B4. Cuando termines de enseñar dev, vuelve a docker:**
+**B5. Vuelve al perfil `docker` para el resto de la defensa:**
 
 ```bash
-# Ctrl+C para parar bootRun
-docker compose start api
+sed -i 's/^SPRING_PROFILE=.*/SPRING_PROFILE=docker/' .env
+docker compose up -d --force-recreate api
 ```
 
 ---

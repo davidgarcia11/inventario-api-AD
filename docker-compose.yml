@@ -43,7 +43,11 @@ services:
       mariadb:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: docker
+      # El perfil viene del .env (SPRING_PROFILE). Por defecto "docker".
+      # Cambia a "dev" para que el contenedor arranque con el seeder
+      # (3 almacenes de muestra) y ddl-auto=create-drop. Cambia a "prod"
+      # para validar el esquema sin tocar datos.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILE:-docker}
       DB_URL: jdbc:mariadb://mariadb:3306/${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
