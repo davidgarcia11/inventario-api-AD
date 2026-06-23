@@ -82,13 +82,29 @@ public class ProductoService {
         if (productoActualizado.getDescripcion() != null) {
             producto.setDescripcion(productoActualizado.getDescripcion());
         }
-        if (productoActualizado.getPrecioVenta() != null && productoActualizado.getPrecioVenta() > 0) {
+        // Si el cliente envía estos campos, los validamos y rechazamos los
+        // valores fuera de rango. Antes simplemente se ignoraban valores
+        // inválidos en silencio, lo que confundía al cliente porque el PUT
+        // respondía 200 sin cambiar nada.
+        if (productoActualizado.getPrecioVenta() != null) {
+            if (productoActualizado.getPrecioVenta() <= 0) {
+                log.error("Error: Precio de venta inválido");
+                throw new IllegalArgumentException("El precio de venta debe ser mayor a 0");
+            }
             producto.setPrecioVenta(productoActualizado.getPrecioVenta());
         }
-        if (productoActualizado.getPrecioCosto() != null && productoActualizado.getPrecioCosto() > 0) {
+        if (productoActualizado.getPrecioCosto() != null) {
+            if (productoActualizado.getPrecioCosto() <= 0) {
+                log.error("Error: Precio de coste inválido");
+                throw new IllegalArgumentException("El precio de coste debe ser mayor a 0");
+            }
             producto.setPrecioCosto(productoActualizado.getPrecioCosto());
         }
-        if (productoActualizado.getStockTotal() != null && productoActualizado.getStockTotal() >= 0) {
+        if (productoActualizado.getStockTotal() != null) {
+            if (productoActualizado.getStockTotal() < 0) {
+                log.error("Error: Stock negativo");
+                throw new IllegalArgumentException("El stock no puede ser negativo");
+            }
             producto.setStockTotal(productoActualizado.getStockTotal());
         }
         if (productoActualizado.getActivo() != null) {
