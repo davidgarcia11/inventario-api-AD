@@ -522,6 +522,147 @@
                   "pm.test('La respuesta de error tiene codigo y mensaje', function () {",
                   "    pm.expect(json).to.have.property('codigo').that.eql(400);",
                   "    pm.expect(json).to.have.property('mensaje').that.is.a('string');",
+                  "});",
+                  "pm.test('El mensaje menciona SKU', function () {",
+                  "    pm.expect(json.mensaje.toUpperCase()).to.include('SKU');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST sin nombre (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "Sin nombre, el service valida y la API responde 400.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"SIN-NAME-001\",\n  \"precioVenta\": 1.0,\n  \"stockTotal\": 5\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST sin nombre devuelve 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El mensaje menciona el nombre', function () {",
+                  "    pm.expect(json.codigo).to.eql(400);",
+                  "    pm.expect(json.mensaje.toLowerCase()).to.include('nombre');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST con precioVenta no positivo (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "precioVenta=0 no es válido; el service exige > 0.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Precio cero\",\n  \"sku\": \"PRECIO-001\",\n  \"precioVenta\": 0,\n  \"stockTotal\": 5\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST con precio no positivo devuelve 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El mensaje menciona el precio', function () {",
+                  "    pm.expect(json.codigo).to.eql(400);",
+                  "    pm.expect(json.mensaje.toLowerCase()).to.include('precio');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST con stockTotal negativo (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos"
+              ]
+            },
+            "description": "stockTotal negativo no se permite.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Stock negativo\",\n  \"sku\": \"STOCK-001\",\n  \"precioVenta\": 1.5,\n  \"stockTotal\": -10\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('POST con stock negativo devuelve 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El mensaje menciona el stock', function () {",
+                  "    pm.expect(json.codigo).to.eql(400);",
+                  "    pm.expect(json.mensaje.toLowerCase()).to.include('stock');",
                   "});"
                 ]
               }
@@ -603,8 +744,57 @@
                   "pm.test('PUT de id inexistente devuelve 404', function () {",
                   "    pm.response.to.have.status(404);",
                   "});",
+                  "const json = pm.response.json();",
                   "pm.test('Body de error coherente', function () {",
-                  "    pm.expect(pm.response.json().codigo).to.eql(404);",
+                  "    pm.expect(json.codigo).to.eql(404);",
+                  "    pm.expect(json.mensaje).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT con precioVenta no positivo (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/productos/{{productoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "productos",
+                "{{productoId}}"
+              ]
+            },
+            "description": "PUT con precio=0 sobre un producto que sí existe; debe rechazar con 400 sin tocar el recurso.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Producto Integration\",\n  \"sku\": \"INT-001\",\n  \"precioVenta\": 0,\n  \"stockTotal\": 1\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PUT con precio no positivo devuelve 400', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Body de error coherente', function () {",
+                  "    pm.expect(json.codigo).to.eql(400);",
+                  "    pm.expect(json.mensaje.toLowerCase()).to.include('precio');",
                   "});"
                 ]
               }
@@ -647,6 +837,11 @@
                 "exec": [
                   "pm.test('PATCH de id inexistente devuelve 404', function () {",
                   "    pm.response.to.have.status(404);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Body de error coherente', function () {",
+                  "    pm.expect(json.codigo).to.eql(404);",
+                  "    pm.expect(json.mensaje).to.be.a('string');",
                   "});"
                 ]
               }
@@ -680,6 +875,11 @@
                 "exec": [
                   "pm.test('DELETE de id inexistente devuelve 404', function () {",
                   "    pm.response.to.have.status(404);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('Body de error coherente', function () {",
+                  "    pm.expect(json.codigo).to.eql(404);",
+                  "    pm.expect(json.mensaje).to.be.a('string');",
                   "});"
                 ]
               }
