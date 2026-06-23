@@ -10,9 +10,9 @@ API REST para gestión de inventario con Spring Boot 3.2.2 y MariaDB. Trabajo de
 
 | Requisito obligatorio | Dónde está implementado | Cómo verificarlo en 30 segundos |
 |---|---|---|
-| **#1 Versionado V2 sobre Almacén con campo `prioritario`** | `src/main/java/.../controller/v2/AlmacenV2Controller.java` + DTOs V2 | `curl http://44.211.79.100:8080/api/v2/almacenes?prioritario=true` |
+| **#1 Versionado V2 sobre Almacén con campo `prioritario`** | `src/main/java/.../controller/v2/AlmacenV2Controller.java` + DTOs V2 | `curl http://52.0.222.166:8080/api/v2/almacenes?prioritario=true` |
 | **#2 Configuración externa (dev/prod, prod con MariaDB)** | `application.properties` + `application-dev.properties` + `application-prod.properties` | Sección [⚙️ Perfiles de configuración](#-perfiles-de-configuración) |
-| **#3 Despliegue en AWS** | [`DEPLOY.md`](DEPLOY.md) + [`deploy/user-data.sh`](deploy/user-data.sh) | Abrir `http://44.211.79.100:8080/swagger-ui/index.html` |
+| **#3 Despliegue en AWS** | [`DEPLOY.md`](DEPLOY.md) + [`deploy/user-data.sh`](deploy/user-data.sh) | Abrir `http://52.0.222.166:8080/swagger-ui/index.html` |
 | **#4 Tests de integración Postman + GitHub Actions** | [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) + colección `Inventario API - Integration Tests.postman_collection.json` | Pestaña [Actions del repo](https://github.com/davidgarcia11/inventario-api-AD/actions) — runs en verde |
 | **#5 Apiman con API Key + Rate Limit** | [`APIMAN.md`](APIMAN.md) + carpeta [`apiman/`](apiman/) | Sigue `APIMAN.md` para arrancar el stack y probar las dos políticas |
 
@@ -32,11 +32,11 @@ API REST para gestión de inventario con Spring Boot 3.2.2 y MariaDB. Trabajo de
 | [`openapi.yaml`](openapi.yaml) | Contrato OpenAPI 3.0 (también accesible en `/v3/api-docs`). |
 
 ### URL de la API desplegada
-- **API**: `http://44.211.79.100:8080` (EC2 t3.small, Amazon Linux 2023, Docker Compose).
-- **Swagger UI**: http://44.211.79.100:8080/swagger-ui/index.html
-- **OpenAPI JSON**: http://44.211.79.100:8080/v3/api-docs
+- **API**: `http://52.0.222.166:8080` (EC2 t3.small, Amazon Linux 2023, Docker Compose).
+- **Swagger UI**: http://52.0.222.166:8080/swagger-ui/index.html
+- **OpenAPI JSON**: http://52.0.222.166:8080/v3/api-docs
 
-> ⚠️ Si la API no responde es porque la instancia EC2 del Learner Lab está parada. Avísame por correo y la arranco en menos de 1 minuto. La IP pública puede cambiar al re-arrancarla — el Swagger sigue siendo accesible en la nueva IP.
+> ⚠️ Si la API no responde es porque la instancia EC2 del Learner Lab está parada. Avísame por correo y la arranco en menos de 1 minuto. La IP es **Elastic IP** (fija mientras dure el curso), así que no cambia entre arranques.
 
 ---
 
