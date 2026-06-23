@@ -1502,70 +1502,10 @@
     },
     {
       "name": "V2 - Almacén con campo 'prioritario'",
-      "description": "Endpoints versionados V2. Todos sobre la entidad Almacén y giran alrededor del nuevo campo 'prioritario' (boolean). El DELETE rechaza con 409 si el almacén es prioritario; antes hay que pasar prioritario=false con el PUT.",
+      "description": "Endpoints versionados V2. Mismos 6 verbos que la V1 (POST, GET id, GET lista, PUT, PATCH, DELETE) y se diferencian en: aceptan/devuelven el campo 'prioritario', el GET lista admite filtro ?prioritario=true|false y el DELETE rechaza con 409 si el almacén es prioritario (hay que ponerlo a false antes).",
       "item": [
         {
-          "name": "1. GET paginado (200)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v2/almacenes?page=0&size=10&sort=id,asc",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v2",
-                "almacenes"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
-                },
-                {
-                  "key": "sort",
-                  "value": "id,asc"
-                }
-              ]
-            },
-            "description": "GET paginado de la V2. Devuelve un objeto con metadatos (page, size, totalElements, totalPages, first, last) y un array 'content' con los almacenes. Cada almacén incluye el nuevo campo 'prioritario'."
-          },
-          "response": []
-        },
-        {
-          "name": "1b. GET paginado page negativo (400)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/v2/almacenes?page=-1",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v2",
-                "almacenes"
-              ],
-              "query": [
-                {
-                  "key": "page",
-                  "value": "-1"
-                }
-              ]
-            },
-            "description": "page=-1 debe devolver 400 con codigo+mensaje."
-          },
-          "response": []
-        },
-        {
-          "name": "2. POST crear prioritario (201)",
+          "name": "1. POST crear prioritario (201)",
           "request": {
             "method": "POST",
             "header": [
@@ -1585,7 +1525,7 @@
                 "almacenes"
               ]
             },
-            "description": "POST de la V2 con DTO. Acepta 'prioritario'. Devuelve 201 + cabecera Location apuntando al nuevo recurso.",
+            "description": "POST V2 con DTO. Acepta 'prioritario'. Devuelve 201 con el almacén creado.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Zaragoza\",\n  \"capacidadMaxima\": 10000,\n  \"stockActual\": 0,\n  \"responsable\": \"María García\",\n  \"prioritario\": true\n}"
@@ -1594,7 +1534,7 @@
           "response": []
         },
         {
-          "name": "2b. POST crear NO prioritario (201)",
+          "name": "1b. POST crear NO prioritario (201)",
           "request": {
             "method": "POST",
             "header": [
@@ -1614,7 +1554,7 @@
                 "almacenes"
               ]
             },
-            "description": "Mismo POST pero el almacén NO es prioritario (por defecto false).",
+            "description": "Mismo POST pero el almacén NO es prioritario.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Almacén Auxiliar\",\n  \"ubicacion\": \"Madrid\",\n  \"capacidadMaxima\": 2000,\n  \"prioritario\": false\n}"
@@ -1623,7 +1563,7 @@
           "response": []
         },
         {
-          "name": "2c. POST sin nombre (400)",
+          "name": "1c. POST sin nombre (400)",
           "request": {
             "method": "POST",
             "header": [
@@ -1643,7 +1583,7 @@
                 "almacenes"
               ]
             },
-            "description": "Sin nombre, el DTO falla validación y la API responde 400.",
+            "description": "Sin nombre, el DTO falla validación y la API responde 400 con {codigo, mensaje}.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"ubicacion\": \"Zaragoza\",\n  \"prioritario\": true\n}"
@@ -1652,7 +1592,95 @@
           "response": []
         },
         {
-          "name": "3. PUT marcar como prioritario (200)",
+          "name": "2. GET por id (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "1"
+              ]
+            },
+            "description": "GET por id en V2. Devuelve el almacén incluyendo el campo 'prioritario'."
+          },
+          "response": []
+        },
+        {
+          "name": "2b. GET por id inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "999"
+              ]
+            },
+            "description": "GET por id que no existe -> 404 con {codigo, mensaje}."
+          },
+          "response": []
+        },
+        {
+          "name": "3. GET lista (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Lista plana V2. Cada almacén trae el campo 'prioritario'. Acepta los mismos filtros que la V1 (nombre, ubicacion, capacidadMaxima) más el nuevo ?prioritario=true|false."
+          },
+          "response": []
+        },
+        {
+          "name": "3b. GET lista solo prioritarios (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes?prioritario=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ],
+              "query": [
+                {
+                  "key": "prioritario",
+                  "value": "true"
+                }
+              ]
+            },
+            "description": "GET lista usando el filtro nuevo de V2: solo almacenes prioritarios."
+          },
+          "response": []
+        },
+        {
+          "name": "4. PUT marcar como prioritario (200)",
           "request": {
             "method": "PUT",
             "header": [
@@ -1673,7 +1701,7 @@
                 "1"
               ]
             },
-            "description": "PUT de la V2 con DTO restringido. Permite cambiar el campo 'prioritario'. La capacidadMaxima ya no se modifica desde aquí.",
+            "description": "PUT V2 con DTO. Permite cambiar el campo 'prioritario'.",
             "body": {
               "mode": "raw",
               "raw": "{\n  \"nombre\": \"Almacén Central\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 6500,\n  \"responsable\": \"María García\",\n  \"prioritario\": true\n}"
@@ -1682,7 +1710,7 @@
           "response": []
         },
         {
-          "name": "3b. PUT quitar prioritario (200)",
+          "name": "4b. PUT quitar prioritario (200)",
           "request": {
             "method": "PUT",
             "header": [
@@ -1712,7 +1740,7 @@
           "response": []
         },
         {
-          "name": "3c. PUT id inexistente (404)",
+          "name": "4c. PUT id inexistente (404)",
           "request": {
             "method": "PUT",
             "header": [
@@ -1742,7 +1770,67 @@
           "response": []
         },
         {
-          "name": "4. DELETE NO prioritario (204)",
+          "name": "5. PATCH solo prioritario (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "1"
+              ]
+            },
+            "description": "PATCH parcial V2. Solo manda el campo que quiere cambiar; el resto se mantiene como estaba.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5b. PATCH id inexistente (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "999"
+              ]
+            },
+            "description": "PATCH sobre un id que no existe -> 404.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. DELETE NO prioritario (204)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1758,12 +1846,12 @@
                 "2"
               ]
             },
-            "description": "DELETE de la V2. Si el almacén NO es prioritario, hace soft delete y devuelve 204."
+            "description": "DELETE V2. Si el almacén NO es prioritario, hace soft delete y devuelve 204."
           },
           "response": []
         },
         {
-          "name": "4b. DELETE prioritario (409)",
+          "name": "6b. DELETE prioritario (409)",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1779,12 +1867,12 @@
                 "1"
               ]
             },
-            "description": "DELETE de la V2 sobre un almacén marcado prioritario=true. La V2 rechaza con 409 Conflict y un mensaje explicando que antes hay que quitarle el flag (usar el PUT del paso 3b)."
+            "description": "DELETE V2 sobre un almacén con prioritario=true. La V2 rechaza con 409 Conflict y un mensaje explicando que antes hay que quitarle el flag (usar el PUT del paso 4b o el PATCH del 5)."
           },
           "response": []
         },
         {
-          "name": "4c. DELETE id inexistente (404)",
+          "name": "6c. DELETE id inexistente (404)",
           "request": {
             "method": "DELETE",
             "header": [],

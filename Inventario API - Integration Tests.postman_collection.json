@@ -690,7 +690,7 @@
     },
     {
       "name": "3. Almacenes V2 - Camino feliz",
-      "description": "Cubre los 4 endpoints V2 (GET paginado, POST con prioritario, PUT que cambia prioritario, DELETE con bloqueo 409 si es prioritario).",
+      "description": "Cubre los 6 endpoints V2 (POST, GET por id, GET lista con filtro prioritario, PUT, PATCH, DELETE con bloqueo 409 si es prioritario). La V2 tiene paridad de endpoints con la V1; lo que cambia es que aceptan/devuelven el campo prioritario y el DELETE rechaza con 409 cuando ese flag está en true.",
       "item": [
         {
           "name": "POST crear almacén normal V2 (201)",
@@ -789,12 +789,91 @@
           ]
         },
         {
-          "name": "GET listado paginado V2 (200)",
+          "name": "GET por id almacén prioritario V2 (200)",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v2/almacenes?page=0&size=10",
+              "raw": "{{baseUrl}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "GET por id en V2. El almacén devuelto debe incluir el campo prioritario=true."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET V2 por id devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El almacén devuelto es prioritario', function () {",
+                  "    pm.expect(json).to.have.property('prioritario').that.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET lista V2 (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Lista plana V2. Verifica que es un array y que cada elemento trae el campo prioritario."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET V2 lista devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('La respuesta es un array', function () {",
+                  "    pm.expect(json).to.be.an('array');",
+                  "});",
+                  "pm.test('Cada almacén trae el campo prioritario', function () {",
+                  "    pm.expect(json.length).to.be.greaterThan(0);",
+                  "    json.forEach(a => pm.expect(a).to.have.property('prioritario'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET lista V2 con filtro prioritario=true (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes?prioritario=true",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -805,16 +884,12 @@
               ],
               "query": [
                 {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
+                  "key": "prioritario",
+                  "value": "true"
                 }
               ]
             },
-            "description": "Listado paginado V2. Verifica que la respuesta lleva content/page/size/totalElements y que los almacenes traen el campo prioritario."
+            "description": "Filtro nuevo de V2: solo almacenes prioritarios. Todos los del array deben tener prioritario=true."
           },
           "response": [],
           "event": [
@@ -823,19 +898,13 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test('GET V2 paginado devuelve 200', function () {",
+                  "pm.test('GET V2 con filtro prioritario devuelve 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
                   "const json = pm.response.json();",
-                  "pm.test('La respuesta tiene la estructura paginada', function () {",
-                  "    pm.expect(json).to.have.property('content').that.is.an('array');",
-                  "    pm.expect(json).to.have.property('page');",
-                  "    pm.expect(json).to.have.property('size');",
-                  "    pm.expect(json).to.have.property('totalElements');",
-                  "});",
-                  "pm.test('Los almacenes traen el campo prioritario', function () {",
-                  "    pm.expect(json.content.length).to.be.greaterThan(0);",
-                  "    json.content.forEach(a => pm.expect(a).to.have.property('prioritario'));",
+                  "pm.test('Todos los almacenes devueltos son prioritarios', function () {",
+                  "    pm.expect(json).to.be.an('array');",
+                  "    json.forEach(a => pm.expect(a.prioritario).to.eql(true));",
                   "});"
                 ]
               }
@@ -966,6 +1035,57 @@
           ]
         },
         {
+          "name": "PATCH solo cambia nombre V2 (200)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/{{almacenId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenId}}"
+              ]
+            },
+            "description": "PATCH parcial V2: solo manda el nombre, el resto del almacén se mantiene.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Test Normal Renombrado\"\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PATCH V2 devuelve 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const json = pm.response.json();",
+                  "pm.test('El nombre se ha actualizado', function () {",
+                  "    pm.expect(json.nombre).to.eql('Almacén Test Normal Renombrado');",
+                  "});",
+                  "pm.test('El resto de campos se conserva', function () {",
+                  "    pm.expect(json).to.have.property('ubicacion');",
+                  "    pm.expect(json).to.have.property('prioritario');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "DELETE almacén normal V2 (204) - limpieza",
           "request": {
             "method": "DELETE",
@@ -1040,6 +1160,86 @@
                 "exec": [
                   "pm.test('POST V2 sin nombre devuelve 400', function () {",
                   "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET V2 id inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "999999"
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('GET V2 id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Body de error coherente', function () {",
+                  "    pm.expect(pm.response.json().codigo).to.eql(404);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PATCH V2 id inexistente (404)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v2/almacenes/999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "999999"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('PATCH V2 id inexistente devuelve 404', function () {",
+                  "    pm.response.to.have.status(404);",
                   "});"
                 ]
               }

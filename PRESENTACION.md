@@ -96,26 +96,30 @@ Abrir `src/main/resources/application-dev.properties` y `application-prod.proper
 
 Navegador → `http://NUEVA_IP:8080/swagger-ui.html`
 
-> "Aquí están los 4 endpoints versionados. La V2 introduce el campo `prioritario` en Almacén. Mismo recurso, distinto contrato:
-> - V1: `/api/almacenes` — comportamiento original.
-> - V2: `/api/v2/almacenes` — añade `prioritario`, paginación en GET y bloqueo del DELETE si es prioritario."
+> "La V2 tiene exactamente los mismos 6 endpoints que la V1 sobre Almacén (POST, GET por id, GET lista, PUT, PATCH, DELETE). Se diferencia en lo que justifica el versionado:
+> - Acepta y devuelve el campo nuevo `prioritario` en todas las operaciones.
+> - El GET lista admite un filtro nuevo `?prioritario=true|false`.
+> - El DELETE rechaza con `409 Conflict` si el almacén está marcado como prioritario."
 
 **C2. Enseñar el código.**
 
 IntelliJ → [AlmacenV2Controller.java](src/main/java/com/example/inventarioapiad/controller/v2/AlmacenV2Controller.java):
 
-> "El controller V2 usa DTOs propios (`AlmacenCreateRequestV2`, `AlmacenUpdateRequestV2`) para aceptar `prioritario`. El DELETE invoca `eliminarSiNoPrioritario(id)` del service: si está marcado como prioritario, lanza `IllegalStateException` que el controller traduce a `409 Conflict`."
+> "El controller V2 usa DTOs propios (`AlmacenCreateRequestV2`, `AlmacenUpdateRequestV2`) para aceptar `prioritario`. El DELETE invoca `eliminarSiNoPrioritario(id)` del service: si está marcado como prioritario, lanza `IllegalStateException` que el controller traduce a `409 Conflict`. El service tiene `buscarConFiltrosV2(...)` que reutiliza el filtrado V1 y añade el filtro por `prioritario`."
 
 **C3. Demostración en Postman contra AWS.**
 
-Postman → environment **aws** seleccionado → collection **"Inventario API - COMPLETA"**:
+Postman → environment **aws** seleccionado → collection **"Inventario API - COMPLETA"** → carpeta **"V2 - Almacén con campo 'prioritario'"**:
 
-1. `GET /api/v2/almacenes` → ver respuesta paginada con `content[]` y `prioritario` en cada elemento.
-2. `DELETE /api/v2/almacenes/{id}` donde el id es el del almacén "Crítico Madrid" (prioritario) → respuesta **409** con `"mensaje": "No se puede eliminar un almacén prioritario..."`.
-3. `PUT /api/v2/almacenes/{id}` con `prioritario: false` → 200.
-4. Reintenta el `DELETE` → **204**.
+1. `1. POST crear prioritario` → 201 con `prioritario: true`.
+2. `2. GET por id` (el del Almacén Crítico Madrid del seed) → 200 con `prioritario: true`.
+3. `3. GET lista` → 200, array plano donde cada almacén trae `prioritario`.
+4. `3b. GET lista solo prioritarios` (`?prioritario=true`) → 200, todos los devueltos son prioritarios.
+5. `6b. DELETE prioritario` → **409** con `"mensaje": "No se puede eliminar un almacén prioritario..."`.
+6. `5. PATCH solo prioritario` con `{ "prioritario": false }` → 200.
+7. Reintenta el `DELETE` → **204**.
 
-> "El versionado V2 no es cosmético: cambia el comportamiento de los 4 endpoints alrededor del nuevo campo."
+> "El versionado V2 no es cosmético: misma forma que V1 pero introduce un campo de negocio nuevo que cambia el contrato del DELETE y añade un filtro útil. Es un cambio incompatible (clientes que no conozcan `prioritario` podrían sorprenderse del 409), de ahí que se versione."
 
 ---
 
@@ -129,7 +133,7 @@ Postman → environment **aws** → collection **"Inventario API - Integration T
 - Pulsa **Run Inventario API - Integration Tests**
 - Newman corre y enseña los `pm.test()` en verde
 
-> "La colección cubre Productos V1 (camino feliz y casos de error 400/404) y Almacenes V2 (POST normal, POST prioritario, GET paginado, DELETE 409 cuando es prioritario, PUT despriorizar, DELETE 204)."
+> "La colección cubre Productos V1 (camino feliz y casos de error 400/404) y Almacenes V2 (POST normal, POST prioritario, GET por id, GET lista, GET con filtro prioritario, DELETE 409 cuando es prioritario, PUT/PATCH despriorizar, DELETE 204, y casos 404)."
 
 **D2. Mismos tests por línea de comandos (Newman).**
 
