@@ -10,7 +10,7 @@ API REST para gestión de inventario con Spring Boot 3.2.2 y MariaDB. Trabajo de
 
 | Requisito obligatorio | Dónde está implementado | Cómo verificarlo en 30 segundos |
 |---|---|---|
-| **#1 Versionado de 4 endpoints (GET/POST/PUT/DELETE)** | `src/main/java/.../controller/v2/` + 4 DTOs | `curl http://44.211.79.100:8080/api/v2/productos?page=0&size=2` |
+| **#1 Versionado V2 sobre Almacén con campo `prioritario`** | `src/main/java/.../controller/v2/AlmacenV2Controller.java` + DTOs V2 | `curl http://44.211.79.100:8080/api/v2/almacenes?prioritario=true` |
 | **#2 Configuración externa (dev/prod, prod con MariaDB)** | `application.properties` + `application-dev.properties` + `application-prod.properties` | Sección [⚙️ Perfiles de configuración](#-perfiles-de-configuración) |
 | **#3 Despliegue en AWS** | [`DEPLOY.md`](DEPLOY.md) + [`deploy/user-data.sh`](deploy/user-data.sh) | Abrir `http://44.211.79.100:8080/swagger-ui/index.html` |
 | **#4 Tests de integración Postman + GitHub Actions** | [`.github/workflows/integration-tests.yml`](.github/workflows/integration-tests.yml) + colección `Inventario API - Integration Tests.postman_collection.json` | Pestaña [Actions del repo](https://github.com/davidgarcia11/inventario-api-AD/actions) — runs en verde |
@@ -168,16 +168,18 @@ Si quieres usar otras credenciales solo tienes que cambiar las variables `authUs
 
 ## 🧬 Versionado de la API (V1 y V2)
 
-La V1 (endpoints existentes en `/api/...`) sigue funcionando exactamente igual. La V2 introduce 4 endpoints alternativos en `/api/v2/...` con cambios en su comportamiento. Así se garantiza retrocompatibilidad: los clientes antiguos siguen usando V1 mientras los nuevos pueden adoptar V2.
+La V1 (endpoints en `/api/...`) sigue funcionando exactamente igual. La V2 (`/api/v2/almacenes`) tiene **los mismos 6 endpoints que la V1 de Almacenes** y se diferencia en lo que justifica el versionado: introduce el campo nuevo `prioritario` y un comportamiento de negocio asociado. Así se garantiza retrocompatibilidad: los clientes que solo conocen V1 siguen funcionando, y los que adoptan V2 pueden marcar almacenes como prioritarios y filtrarlos.
 
-| Verbo | V1 | V2 | Cambio |
+| Verbo | V1 | V2 | Diferencia |
 |---|---|---|---|
-| GET | `/api/productos` | `/api/v2/productos?page=&size=&sort=` | Devuelve un objeto **paginado** (`content`, `totalElements`, `totalPages`...) en vez de la lista entera. |
-| POST | `/api/clientes` | `/api/v2/clientes` | Recibe un **DTO `ClienteCreateRequest`** con email obligatorio (`@Email`), no la entidad. Devuelve **201 + header `Location`**. |
-| PUT | `/api/almacenes/{id}` | `/api/v2/almacenes/{id}` | Recibe un **DTO restringido** (solo `nombre`, `ubicacion`, `stockActual`). La capacidad máxima ya no se cambia por aquí. |
-| DELETE | `/api/proveedores/{id}` | `/api/v2/proveedores/{id}?hard=true` | Sin parámetros sigue siendo soft delete. Con `?hard=true` borra el registro físicamente de la BD. |
+| POST | `/api/almacenes` | `/api/v2/almacenes` | Acepta el campo `prioritario` (DTO `AlmacenCreateRequestV2`). |
+| GET por id | `/api/almacenes/{id}` | `/api/v2/almacenes/{id}` | Devuelve el almacén con el campo `prioritario`. |
+| GET lista | `/api/almacenes` | `/api/v2/almacenes?prioritario=true\|false` | Mismos filtros que V1 más uno nuevo para `prioritario`. |
+| PUT | `/api/almacenes/{id}` | `/api/v2/almacenes/{id}` | Acepta cambiar `prioritario` (DTO `AlmacenUpdateRequestV2`). |
+| PATCH | `/api/almacenes/{id}` | `/api/v2/almacenes/{id}` | Permite modificar parcialmente, incluyendo `prioritario`. |
+| DELETE | `/api/almacenes/{id}` | `/api/v2/almacenes/{id}` | **Devuelve `409 Conflict`** si `prioritario=true`. Si no, soft delete (204). |
 
-Los 4 endpoints V2 también están en la colección Postman, en el folder **"V2 - Endpoints versionados"**, con la descripción del cambio en cada request.
+Los 6 endpoints V2 están en la colección Postman, en el folder **"V2 - Almacén con campo 'prioritario'"**, con tests de los códigos clave (201/200/400/404/409/204).
 
 ## 🧪 Tests de integración con Newman + GitHub Actions
 

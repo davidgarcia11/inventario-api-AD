@@ -445,7 +445,7 @@
           ]
         },
         {
-          "name": "GET listado paginado V2",
+          "name": "GET por id almacén V2",
           "request": {
             "method": "GET",
             "header": [
@@ -455,7 +455,58 @@
               }
             ],
             "url": {
-              "raw": "{{apimanGateway}}/api/v2/almacenes?page=0&size=10",
+              "raw": "{{apimanGateway}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "GET por id V2 vía Apiman. La respuesta incluye el campo 'prioritario'."
+          },
+          "response": []
+        },
+        {
+          "name": "GET lista V2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Lista plana V2 vía Apiman. Cada almacén trae el campo 'prioritario'."
+          },
+          "response": []
+        },
+        {
+          "name": "GET lista V2 solo prioritarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes?prioritario=true",
               "host": [
                 "{{apimanGateway}}"
               ],
@@ -466,16 +517,12 @@
               ],
               "query": [
                 {
-                  "key": "page",
-                  "value": "0"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
+                  "key": "prioritario",
+                  "value": "true"
                 }
               ]
             },
-            "description": "Listado paginado V2. La respuesta trae content/page/size/totalElements y cada almacén incluye el campo nuevo 'prioritario'."
+            "description": "Filtro nuevo de V2 pasando por Apiman: solo almacenes prioritarios."
           },
           "response": []
         },
@@ -506,9 +553,9 @@
           "response": []
         },
         {
-          "name": "PUT despriorizar almacén V2",
+          "name": "PATCH despriorizar almacén V2",
           "request": {
-            "method": "PUT",
+            "method": "PATCH",
             "header": [
               {
                 "key": "X-API-Key",
@@ -531,10 +578,10 @@
                 "{{almacenPrioritarioId}}"
               ]
             },
-            "description": "Cambia prioritario=true a false. Tras esto, el DELETE siguiente sí funcionará.",
+            "description": "PATCH parcial V2: solo manda el campo prioritario en false. El resto del almacén se mantiene. Tras esto, el DELETE siguiente sí funcionará.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nombre\": \"Almacén Apiman Prioritario\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 0,\n  \"responsable\": \"Defensa via Apiman\",\n  \"prioritario\": false\n}"
+              "raw": "{\n  \"prioritario\": false\n}"
             }
           },
           "response": []
