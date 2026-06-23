@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,8 +21,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-// Tests del AlmacenV2Controller, que reúne los 4 endpoints versionados
-// alrededor del nuevo campo "prioritario".
+// Tests del AlmacenV2Controller (V2 con paridad respecto a V1 + el
+// campo "prioritario"). Cubre los 6 endpoints (POST, GET id, GET lista
+// con filtro prioritario, PUT, PATCH, DELETE) y los códigos clave:
+// 200/201/204 cuando va bien, 400 con datos inválidos, 404 cuando no
+// existe y 409 cuando el almacén es prioritario y se intenta borrar.
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 public class AlmacenV2ControllerTest {
@@ -39,48 +39,10 @@ public class AlmacenV2ControllerTest {
     @MockBean
     private AlmacenService almacenService;
 
-    // ---------- GET paginado ----------
-
-    @Test
-    public void getPaginado_devuelve200ConContenido() throws Exception {
-        Almacen a = new Almacen();
-        a.setId(1L);
-        a.setNombre("Central");
-        a.setUbicacion("Zaragoza");
-        a.setCapacidadMaxima(10000);
-        a.setPrioritario(true);
-
-        Page<Almacen> pagina = new PageImpl<>(List.of(a));
-        when(almacenService.buscarPaginado(any(Pageable.class))).thenReturn(pagina);
-
-        mockMvc.perform(get("/api/v2/almacenes"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isArray())
-                .andExpect(jsonPath("$.content[0].nombre").value("Central"))
-                .andExpect(jsonPath("$.content[0].prioritario").value(true))
-                .andExpect(jsonPath("$.totalElements").value(1));
-    }
-
-    @Test
-    public void getPaginado_pageNegativo_devuelve400() throws Exception {
-        mockMvc.perform(get("/api/v2/almacenes").param("page", "-1"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.codigo").value(400));
-    }
-
-    @Test
-    public void getPaginado_sizeFueraDeRango_devuelve400() throws Exception {
-        mockMvc.perform(get("/api/v2/almacenes").param("size", "0"))
-                .andExpect(status().isBadRequest());
-
-        mockMvc.perform(get("/api/v2/almacenes").param("size", "200"))
-                .andExpect(status().isBadRequest());
-    }
-
     // ---------- POST crear ----------
 
     @Test
-    public void crearAlmacen_valido_devuelve201YLocation() throws Exception {
+    public void crearAlmacen_valido_devuelve201ConPrioritario() throws Exception {
         AlmacenCreateRequestV2 req = new AlmacenCreateRequestV2();
         req.setNombre("Almacén Central");
         req.setUbicacion("Zaragoza");
@@ -100,8 +62,6 @@ public class AlmacenV2ControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location",
-                        org.hamcrest.Matchers.endsWith("/api/v2/almacenes/42")))
                 .andExpect(jsonPath("$.id").value(42))
                 .andExpect(jsonPath("$.prioritario").value(true));
     }
@@ -128,6 +88,64 @@ public class AlmacenV2ControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isBadRequest());
+    }
+
+    // ---------- GET por id ----------
+
+    @Test
+    public void buscarPorId_existente_devuelve200ConPrioritario() throws Exception {
+        Almacen a = new Almacen();
+        a.setId(7L);
+        a.setNombre("Norte");
+        a.setUbicacion("Bilbao");
+        a.setPrioritario(false);
+
+        when(almacenService.buscarPorId(7L)).thenReturn(a);
+
+        mockMvc.perform(get("/api/v2/almacenes/7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(7))
+                .andExpect(jsonPath("$.prioritario").value(false));
+    }
+
+    @Test
+    public void buscarPorId_noExiste_devuelve404() throws Exception {
+        when(almacenService.buscarPorId(999L))
+                .thenThrow(new RuntimeException("Almacén no encontrado con ID: 999"));
+
+        mockMvc.perform(get("/api/v2/almacenes/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value(404));
+    }
+
+    // ---------- GET lista ----------
+
+    @Test
+    public void buscarTodos_devuelveListaConPrioritario() throws Exception {
+        Almacen a = new Almacen();
+        a.setId(1L);
+        a.setNombre("Central");
+        a.setPrioritario(true);
+
+        when(almacenService.buscarConFiltrosV2(null, null, null, null))
+                .thenReturn(List.of(a));
+
+        mockMvc.perform(get("/api/v2/almacenes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$[0].nombre").value("Central"))
+                .andExpect(jsonPath("$[0].prioritario").value(true));
+    }
+
+    @Test
+    public void buscarTodos_conFiltroPrioritario_pasaFiltroAlService() throws Exception {
+        when(almacenService.buscarConFiltrosV2(null, null, null, true))
+                .thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v2/almacenes").param("prioritario", "true"))
+                .andExpect(status().isOk());
+
+        verify(almacenService).buscarConFiltrosV2(null, null, null, true);
     }
 
     // ---------- PUT actualizar ----------
@@ -186,6 +204,50 @@ public class AlmacenV2ControllerTest {
         mockMvc.perform(put("/api/v2/almacenes/999")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.codigo").value(404));
+    }
+
+    // ---------- PATCH parcial ----------
+
+    @Test
+    public void patchSoloPrioritario_devuelve200() throws Exception {
+        // Body parcial: solo cambia prioritario, el resto se mantiene.
+        String body = "{\"prioritario\": false}";
+
+        Almacen existente = new Almacen();
+        existente.setId(1L);
+        existente.setNombre("Central");
+        existente.setUbicacion("Zaragoza");
+        existente.setPrioritario(true);
+
+        Almacen actualizado = new Almacen();
+        actualizado.setId(1L);
+        actualizado.setNombre("Central");
+        actualizado.setUbicacion("Zaragoza");
+        actualizado.setPrioritario(false);
+
+        when(almacenService.buscarPorId(eq(1L))).thenReturn(existente);
+        when(almacenService.actualizar(eq(1L), any(Almacen.class))).thenReturn(actualizado);
+
+        mockMvc.perform(patch("/api/v2/almacenes/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prioritario").value(false))
+                .andExpect(jsonPath("$.nombre").value("Central"));
+    }
+
+    @Test
+    public void patchNoExiste_devuelve404() throws Exception {
+        String body = "{\"prioritario\": false}";
+
+        when(almacenService.buscarPorId(eq(999L)))
+                .thenThrow(new RuntimeException("Almacén no encontrado con ID: 999"));
+
+        mockMvc.perform(patch("/api/v2/almacenes/999")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.codigo").value(404));
     }

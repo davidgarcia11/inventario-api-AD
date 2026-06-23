@@ -3,12 +3,8 @@ package com.example.inventarioapiad.service;
 import com.example.inventarioapiad.entity.Almacen;
 import com.example.inventarioapiad.repository.AlmacenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -101,15 +97,22 @@ public class AlmacenService {
     }
 
     // -------------------------------------------------------------------
-    // Métodos extra que usa la V2 (paginado y borrado condicional por
-    // el campo "prioritario"). Se mantienen aquí para no duplicar lógica.
+    // Métodos extra que usa la V2 (filtros con prioritario y borrado
+    // condicional por el campo "prioritario").
     // -------------------------------------------------------------------
 
-    // Lista paginada de almacenes. Lo usa el endpoint GET /api/v2/almacenes.
-    public Page<Almacen> buscarPaginado(Pageable pageable) {
-        log.info("Listando almacenes paginados - página: " + pageable.getPageNumber()
-                + ", tamaño: " + pageable.getPageSize());
-        return almacenRepository.findAll(pageable);
+    // Igual que buscarConFiltros pero acepta un 4º filtro opcional por el
+    // campo "prioritario", que es el que introduce la V2. Si prioritario
+    // es null, no filtra por él.
+    public List<Almacen> buscarConFiltrosV2(String nombre, String ubicacion,
+                                            Integer capacidadMaxima, Boolean prioritario) {
+        List<Almacen> resultado = buscarConFiltros(nombre, ubicacion, capacidadMaxima);
+        if (prioritario != null) {
+            resultado = resultado.stream()
+                    .filter(a -> prioritario.equals(a.getPrioritario()))
+                    .collect(Collectors.toList());
+        }
+        return resultado;
     }
 
     // Borrado especial usado por la V2: si el almacén está marcado como
