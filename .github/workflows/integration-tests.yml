@@ -73,8 +73,12 @@ jobs:
         run: ./gradlew bootJar -x test
 
       - name: Arrancar la API en segundo plano (perfil dev)
+        # Usamos --server.port=8090 para que coincida con el environment
+        # "local" de Postman (que apunta a localhost:8090 para coexistir
+        # con Apiman en el portátil del alumno).
         run: |
           nohup java -jar build/libs/inventario-api-AD-*.jar \
+            --server.port=8090 \
             > app.log 2>&1 &
           echo $! > app.pid
           echo "API arrancando con PID $(cat app.pid)"
@@ -83,7 +87,7 @@ jobs:
         run: |
           for i in $(seq 1 30); do
             if curl -s -o /dev/null \
-                 -X POST http://localhost:8080/api/auth/login \
+                 -X POST http://localhost:8090/api/auth/login \
                  -H "Content-Type: application/json" \
                  -d '{"username":"x","password":"x"}'; then
               echo "API arriba tras ${i} intentos"
@@ -97,7 +101,7 @@ jobs:
           exit 1
 
       - name: Ejecutar Newman contra la API
-        # -e local.postman_environment.json apunta a localhost:8080,
+        # -e local.postman_environment.json apunta a localhost:8090,
         # que es donde está corriendo el JAR arrancado en el step anterior.
         # Para correr la misma colección contra AWS, basta con cambiar el
         # environment a aws.postman_environment.json.

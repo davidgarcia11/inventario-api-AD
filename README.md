@@ -73,7 +73,7 @@ Resultado esperado: **BUILD SUCCESSFUL** (106+ tests pasando)
 ./gradlew bootRun
 ```
 
-La API estará disponible en: `http://localhost:8080`
+La API estará disponible en: `http://localhost:8090`
 
 ## ⚙️ Perfiles de configuración
 
@@ -117,7 +117,7 @@ Si falta cualquiera de las variables, la aplicación falla al arrancar (intencio
 cp .env.example .env          # ajusta usuario/contraseña antes de subir
 docker compose up --build     # la primera vez compila la imagen
 ```
-- API: http://localhost:8080
+- API: http://localhost:8090
 - MariaDB: `localhost:3307` (no choca con la MariaDB local si la tienes en 3306)
 - Perfil Spring activo: `docker` (`ddl-auto=update`, crea esquema la primera vez)
 
@@ -148,13 +148,13 @@ Todos los endpoints `/api/...` excepto `/api/auth/**`, Swagger y la documentaci�
 Ejemplo:
 ```bash
 # 1) Registro
-curl -X POST http://localhost:8080/api/auth/register \
+curl -X POST http://localhost:8090/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username":"david","password":"secreto123"}'
 # -> { "token": "eyJ...", "username": "david", "expiresIn": 3600 }
 
 # 2) Llamada autenticada
-curl -H "Authorization: Bearer eyJ..." http://localhost:8080/api/productos
+curl -H "Authorization: Bearer eyJ..." http://localhost:8090/api/productos
 ```
 
 ### Postman automatiza el token
@@ -325,7 +325,7 @@ Cada entidad tiene operaciones CRUD completas:
     - 3 WireMock tests (simulación de APIs externas)
 
 ### ✅ Documentación
-- OpenAPI 3.0 con Swagger UI: `http://localhost:8080/swagger-ui.html`
+- OpenAPI 3.0 con Swagger UI: `http://localhost:8090/swagger-ui.html`
 - Colección Postman: `inventario-api.postman_collection.json`
 - README.md con instrucciones completas
 - .gitignore configurado para Java/Gradle
@@ -355,7 +355,7 @@ BUILD SUCCESSFUL - 106+ tests pasando
 ### OpenAPI 3.0 / Swagger UI
 ```bash
 ./gradlew bootRun
-# Abre: http://localhost:8080/swagger-ui.html
+# Abre: http://localhost:8090/swagger-ui.html
 ```
 
 Documenta todos los endpoints con:
@@ -374,7 +374,7 @@ Documenta todos los endpoints con:
 - 6 carpetas (Productos, Almacenes, Proveedores, Clientes, Compras, Ventas)
 - 36 requests (POST, GET, GET filtrado, PUT, DELETE por entidad)
 - Ejemplos de body para cada operación
-- URLs preconfiguradas para localhost:8080
+- URLs preconfiguradas para localhost:8090
 
 ## 🔧 Filtrado (hasta 3 campos por entidad)
 

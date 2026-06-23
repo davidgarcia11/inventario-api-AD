@@ -12,10 +12,11 @@ Documento pensado como **chuleta el día de la defensa**. Cubre los 5 obligatori
 | ✅ Repo clonado en `~/Projects/inventario-api-AD` y en rama `develop` | `cd ~/Projects/inventario-api-AD && git status` |
 | ✅ EC2 arrancada en AWS Academy Learner Lab | Web AWS → EC2 → estado `Running`, `2/2 checks` |
 | ✅ IP pública de la EC2 apuntada en el environment `aws` de Postman | Postman → Environments → `aws` → `baseUrl` |
-| ✅ API en AWS responde | `curl http://NUEVA_IP:8080/api/info` devuelve JSON con `perfilActivo: docker` |
+| ✅ API en AWS responde | `curl http://52.0.222.166:8080/api/info` devuelve JSON con `perfilActivo: docker` |
 | ✅ Datos de muestra cargados en AWS | `newman run deploy/seed-aws-almacenes.postman_collection.json -e aws.postman_environment.json` |
 | ✅ Apiman levantado en local | `cd apiman && docker compose ps` — todos `healthy` |
-| ✅ Apiman tiene la API publicada con backend = la IP de AWS | Manager UI → `InventarioAPI 1.0` → Implementation → `http://NUEVA_IP:8080` |
+| ✅ Stack API + MariaDB arrancado en local | `docker compose up -d` en raíz — API en `localhost:8090` |
+| ✅ Apiman tiene la API publicada con backend en local | Manager UI → `InventarioAPI 2.0` → Implementation → `http://inventario-api:8080` (DNS Docker) |
 | ✅ Postman con los 4 collections y los 2 environments importados | Postman → Workspace |
 | ✅ IntelliJ con el proyecto abierto y sin errores | IntelliJ |
 
@@ -28,8 +29,8 @@ Antes de empezar, abre estas pestañas/ventanas para no perder tiempo durante la
 **Navegador (Firefox/Chrome):**
 
 1. AWS Console → EC2 → tu instancia `inventario-api` (para enseñar que está en AWS)
-2. `http://NUEVA_IP:8080/swagger-ui.html` — Swagger de la API en AWS
-3. `http://NUEVA_IP:8080/api/info` — endpoint de perfil
+2. `http://52.0.222.166:8080/swagger-ui.html` — Swagger de la API en AWS
+3. `http://52.0.222.166:8080/api/info` — endpoint de perfil
 4. `https://github.com/davidgarcia11/inventario-api-AD` — repo y PRs/Actions
 5. `http://apiman.local.gd:8080/apimanui/` — Manager UI de Apiman
 
@@ -57,12 +58,12 @@ Enseñar la pestaña **Actions** para que vea los runs de CI verdes.
 
 ### Bloque B — Obligatorio #2: Perfiles dev/prod (~2 min)
 
-**B1. Perfiles distintos a nivel de comportamiento.**
+**B1. Perfil `docker` corriendo en local.**
 
-Abrir en el navegador:
+Asumiendo que tienes el stack arriba (`docker compose up -d` en la raíz), abre en el navegador:
 
 ```
-http://NUEVA_IP:8080/api/info
+http://localhost:8090/api/info
 ```
 
 Respuesta esperada:
@@ -76,9 +77,34 @@ Respuesta esperada:
 }
 ```
 
-> "En AWS arranca con perfil `docker`. El endpoint `/api/info` describe qué hace cada perfil. Aquí `datosDeMuestraAlArrancar` es `false` porque solo el perfil `dev` (que uso en local con IntelliJ) carga el DataSeeder."
+> "Este es el perfil `docker`: BD vacía, credenciales desde `.env`. Es el mismo perfil que corre en AWS."
 
-**B2. Enseñar el código.**
+**B2. Cambiar a perfil `dev` (datos de muestra cargados).**
+
+En terminal, paramos el container y arrancamos en perfil dev con bootRun:
+
+```bash
+docker compose stop api
+./gradlew bootRun --args="--server.port=8090 --spring.profiles.active=dev"
+```
+
+Espera a `Started InventarioApiAdApplication`. Vuelve al navegador:
+
+```
+http://localhost:8090/api/info
+```
+
+> "Mismo endpoint, MISMO PUERTO, pero ahora `perfilActivo: dev` y `datosDeMuestraAlArrancar: true`. La BD se ha recreado (`ddl-auto=create-drop`) y `DataSeederConfig` ha cargado 3 almacenes."
+
+Y para demostrarlo:
+
+```
+http://localhost:8090/api/almacenes
+```
+
+→ Devuelve los 3 almacenes (Central, Norte, Sur).
+
+**B3. Enseñar el código.**
 
 IntelliJ → abrir [DataSeederConfig.java](src/main/java/com/example/inventarioapiad/config/DataSeederConfig.java):
 
@@ -88,13 +114,20 @@ Abrir `src/main/resources/application-dev.properties` y `application-prod.proper
 
 > "Cada perfil tiene su propio archivo con `ddl-auto` distinto: `create-drop` en dev (BD se rehace en cada arranque), `validate` en prod (la BD no se toca, solo se valida el esquema)."
 
+**B4. Cuando termines de enseñar dev, vuelve a docker:**
+
+```bash
+# Ctrl+C para parar bootRun
+docker compose start api
+```
+
 ---
 
 ### Bloque C — Obligatorio #1: Versionado V2 (~3 min)
 
 **C1. Enseñar Swagger.**
 
-Navegador → `http://NUEVA_IP:8080/swagger-ui.html`
+Navegador → `http://localhost:8090/swagger-ui.html` (la API local en docker)
 
 > "La V2 tiene exactamente los mismos 6 endpoints que la V1 sobre Almacén (POST, GET por id, GET lista, PUT, PATCH, DELETE). Se diferencia en lo que justifica el versionado:
 > - Acepta y devuelve el campo nuevo `prioritario` en todas las operaciones.
@@ -108,6 +141,8 @@ IntelliJ → [AlmacenV2Controller.java](src/main/java/com/example/inventarioapia
 > "El controller V2 usa DTOs propios (`AlmacenCreateRequestV2`, `AlmacenUpdateRequestV2`) para aceptar `prioritario`. El DELETE invoca `eliminarSiNoPrioritario(id)` del service: si está marcado como prioritario, lanza `IllegalStateException` que el controller traduce a `409 Conflict`. El service tiene `buscarConFiltrosV2(...)` que reutiliza el filtrado V1 y añade el filtro por `prioritario`."
 
 **C3. Demostración en Postman contra AWS.**
+
+> 🎯 **Aquí es donde enseñas `Inventario API - COMPLETA` contra AWS** — único momento en que cambias al environment remoto. Demuestras que el versionado V2 funciona en la API desplegada de verdad.
 
 Postman → environment **aws** seleccionado → collection **"Inventario API - COMPLETA"** → carpeta **"V2 - Almacén con campo 'prioritario'"**:
 
@@ -125,9 +160,11 @@ Postman → environment **aws** seleccionado → collection **"Inventario API - 
 
 ### Bloque D — Obligatorio #4: Tests de integración + CI (~3 min)
 
+> Vuelves a environment **`local`** en Postman (la API de tu portátil en `localhost:8090`).
+
 **D1. Tests en Postman.**
 
-Postman → environment **aws** → collection **"Inventario API - Integration Tests"** → click en la colección entera → **Run**.
+Postman → environment **local** → collection **"Inventario API - Integration Tests"** → click en la colección entera → **Run**.
 
 - Selecciona todas las requests
 - Pulsa **Run Inventario API - Integration Tests**
@@ -140,7 +177,7 @@ Postman → environment **aws** → collection **"Inventario API - Integration T
 Terminal 1:
 
 ```bash
-newman run "Inventario API - Integration Tests.postman_collection.json" -e aws.postman_environment.json
+newman run "Inventario API - Integration Tests.postman_collection.json" -e local.postman_environment.json
 ```
 
 > "Mismo resultado que en la UI. Lo importante es que estos tests son los que GitHub Actions ejecuta en cada PR."
@@ -192,7 +229,7 @@ Enseñar los servicios `healthy`.
 
 Navegador → `http://apiman.local.gd:8080/apimanui/` → login `admin` / `admin123!`.
 
-> "He creado una organización `InventarioOrg` con una API `InventarioAPI 1.0`. El endpoint backend apunta a la EC2: `http://NUEVA_IP:8080`."
+> "He creado una organización `InventarioOrg` con una API `InventarioAPI 2.0`. El endpoint backend apunta al stack local (`http://inventario-api:8080`), usando el DNS interno de la red Docker compartida `inventario-net`. Gateway y backend están en la misma red, así que el gateway resuelve el nombre del contenedor."
 
 Navegar a `InventarioOrg → APIs → InventarioAPI 1.0 → Implementation` y enseñar el backend.
 
@@ -215,12 +252,12 @@ Terminal 1:
 
 ```bash
 # Sin key → 401/403
-curl -i http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0/api/almacenes
+curl -i http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/2.0/api/almacenes
 
 # Con key → 200 (con los almacenes cargados por el seed)
 APIKEY=<pega-aqui-tu-key>
 curl -H "X-API-Key: $APIKEY" \
-  http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/1.0/api/almacenes
+  http://gateway.local.gd:8080/InventarioOrg/InventarioAPI/2.0/api/almacenes
 ```
 
 **F6. Mismo flujo desde Postman.**
