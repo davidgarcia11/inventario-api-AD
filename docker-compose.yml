@@ -5,8 +5,9 @@
 #   1. cp .env.example .env       (y ajusta las credenciales)
 #   2. docker compose up --build  (la primera vez compila la imagen)
 #
-# La API quedará en http://localhost:8080 y MariaDB en localhost:3307
-# (3307 para no chocar con la MariaDB local del host en 3306).
+# La API quedará en http://localhost:8090 y MariaDB en localhost:3307
+# (8090 para no chocar con Apiman que ya usa el 8080 en el host;
+# 3307 para no chocar con la MariaDB local del host en 3306).
 # ========================================================================
 
 services:
@@ -48,7 +49,11 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
     ports:
-      - "8080:8080"
+      # 8090 en el host -> 8080 dentro del contenedor.
+      # El host expone 8090 porque el 8080 lo ocupa Apiman (gateway/manager).
+      # Dentro de la red Docker el gateway llama al backend como
+      # http://inventario-api:8080 (puerto interno del contenedor).
+      - "8090:8080"
     networks:
       - inventario-net
 
