@@ -30,6 +30,11 @@
     {
       "key": "authTokenExpiresAt",
       "value": "0"
+    },
+    {
+      "key": "almacenPrioritarioId",
+      "value": "",
+      "description": "Se rellena con el id del almacén prioritario creado en la sección V2."
     }
   ],
   "auth": {
@@ -383,6 +388,180 @@
               ]
             },
             "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "1b. Almacenes V2 (via Apiman)",
+      "description": "Operaciones V2 de Almacén pasando por el gateway. Demuestra que la nueva versión también queda protegida por la API Key y el rate limit que Apiman aplica al plan.",
+      "item": [
+        {
+          "name": "POST crear almacén V2 prioritario",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ]
+            },
+            "description": "Crea un almacén V2 marcado como prioritario. Guarda el id devuelto en {{almacenPrioritarioId}} para que el DELETE de más abajo pueda usarlo.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Apiman Prioritario\",\n  \"ubicacion\": \"Zaragoza\",\n  \"capacidadMaxima\": 5000,\n  \"stockActual\": 0,\n  \"responsable\": \"Defensa via Apiman\",\n  \"prioritario\": true\n}"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('almacenPrioritarioId', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET listado paginado V2",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes?page=0&size=10",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "size",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Listado paginado V2. La respuesta trae content/page/size/totalElements y cada almacén incluye el campo nuevo 'prioritario'."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE almacén prioritario (espera 409)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "Intenta borrar el almacén prioritario. La V2 responde 409 Conflict porque marca prioritario=true. Demuestra que la lógica de negocio nueva sigue activa aunque la petición pase por Apiman."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT despriorizar almacén V2",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "Cambia prioritario=true a false. Tras esto, el DELETE siguiente sí funcionará.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Almacén Apiman Prioritario\",\n  \"ubicacion\": \"Zaragoza\",\n  \"stockActual\": 0,\n  \"responsable\": \"Defensa via Apiman\",\n  \"prioritario\": false\n}"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE almacén ya no prioritario (204)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}"
+              }
+            ],
+            "url": {
+              "raw": "{{apimanGateway}}/api/v2/almacenes/{{almacenPrioritarioId}}",
+              "host": [
+                "{{apimanGateway}}"
+              ],
+              "path": [
+                "api",
+                "v2",
+                "almacenes",
+                "{{almacenPrioritarioId}}"
+              ]
+            },
+            "description": "Ahora que prioritario=false, el borrado del V2 devuelve 204."
           },
           "response": []
         }
